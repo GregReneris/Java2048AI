@@ -7,11 +7,17 @@ public class Game2048 {
 
     private String[][] gameBoard = new String[GAME_SIZE][GAME_SIZE]; //represents 4x4 grid for the game.
 
+    /**
+     * default constructor to init a new game.
+     */
+    public Game2048()
+    {
+        newGame();
+    }
+
     public void newGame()
     {
         makeBoardEmpty();
-
-
     }
 
     /**
