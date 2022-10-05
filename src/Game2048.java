@@ -13,6 +13,8 @@ public class Game2048 {
     public Game2048()
     {
         newGame();
+
+        System.out.println("Welcome to 2048");
     }
 
     public void newGame()
