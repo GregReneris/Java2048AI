@@ -111,35 +111,34 @@ public class Game2048 {
         File file = new File(FILENAME);
         Scanner inputFile = new Scanner(file);
         int numberOfTests;
-        int first = 1;
+        int numberTests = 0;
         int col = 0;
-        int row = 0;
 
-        while (inputFile.hasNext()) {
-            if(first == 1)
+        numberTests = inputFile.nextInt();
+        System.out.println("We will run " + numberTests + " number of tests.");
+
+
+
+        for(int testNumber = 0; testNumber < numberTests; testNumber++ )
+        {
+
+            for(int row = 0; row < GAME_SIZE; row++)
             {
-                numberOfTests = inputFile.nextInt();
-                first++;
-                //inputFile.nextLine();
-                System.out.println("We will run " + numberOfTests + " number of tests.");
-            }
-            //Add information to the board. Each line has 4 pieces of information,
-            //Separated by a comma.
-            String newInput = inputFile.next();
-            String[] split = newInput.split(",", 4);
-            //split them into 4.
-            System.out.println("Printing out new Input:" + newInput);
+                String newInput = inputFile.next();
+                String[] split = newInput.split(",", 4);
 
-                for(col = 0; col < GAME_SIZE; col++)
+                for (col = 0; col < GAME_SIZE; col++)
                 {
                     gameBoard[row][col] = Integer.parseInt(split[col]);
                 }
-                row++;
             }
         }
+    }
 
     public static void moveRight()
     {
+
+
 
     }
 
