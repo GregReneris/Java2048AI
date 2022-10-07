@@ -8,6 +8,13 @@ import java.util.Scanner;
  */
 public class Game2048 {
 
+    //TODO: add a board class that are just game states.
+
+    //TODO: Add deterministic number spawning.
+
+    //TODO: Create a tree of nodes to hold board states.
+
+
     private final int GAME_SIZE = 4;
 
     private int[][] gameBoard = new int[GAME_SIZE][GAME_SIZE]; //represents 4x4 grid for the game.
