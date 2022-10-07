@@ -53,11 +53,11 @@ public class Game2048 {
         }
         System.out.print("\n");
         //prints out the rest of the Game Board
-        for (int i = 0; i < gameBoard.length; i++) {
+        for (int row = 0; row < gameBoard.length; row++) {
             //prints out the boxes and X and O
             System.out.print("|");
-            for (int j = 0; j < gameBoard[i].length; j++) {
-                System.out.printf(" %4s |", gameBoard[i][j]);
+            for (int col = 0; col < gameBoard[row].length; col++) {
+                System.out.printf(" %4s |", gameBoard[row][col]);
             }
             System.out.print("\n");
             //prints row dividers
@@ -135,26 +135,85 @@ public class Game2048 {
         }
     }
 
-    public static void moveRight()
-    {
 
+    public void combineNumbers()
+    {
 
 
     }
 
-    public static void moveLeft()
-    {
 
+    public boolean inBounds(int x, int y)
+    {
+        return(x >=0 && x < GAME_SIZE && y >= 0 && y < GAME_SIZE);
     }
 
-    public static void moveUp()
-    {
 
+    public int findAndMoveTile(int row, int col,int drow,int dcol, int retry)
+    {
+        int crow = row+drow;
+        int ccol = col+dcol;
+
+        while(inBounds(crow,ccol))
+        {
+            if(gameBoard[crow][ccol] != 0)
+            {
+                int v = gameBoard[crow][ccol];
+                if(gameBoard[crow][ccol] == gameBoard[row][col] || gameBoard[row][col] == 0)
+                {
+                    gameBoard[row][col] += gameBoard[crow][ccol];
+                    gameBoard[crow][ccol] = 0;
+                }
+
+                return (gameBoard[row][col] == v ? retry : 0);
+            }
+            //if we did not find a match and move.
+            crow += drow;
+            ccol += dcol;
+        }
+
+        return 0;
     }
 
-    public static void moveDown()
+    public void moveRight()
     {
+        for(int row = 0; row < GAME_SIZE; row++) {
+            for (int col = GAME_SIZE-1; col >= 0; col--) {
+                col += findAndMoveTile(row, col, 0,-1, 1);
+            }
+        }
+    }
 
+
+
+
+
+    public void moveLeft()
+    {
+        for(int row = 0; row < GAME_SIZE; row++) {
+            for (int col = 0; col < GAME_SIZE; col++) {
+                col += findAndMoveTile(row, col, 0,1, -1);
+            }
+        }
+    }
+
+    public void moveDown()
+    {
+        for(int col = 0; col < GAME_SIZE; col++) {
+            for (int row = GAME_SIZE-1; row >= 0; row--) {
+                row += findAndMoveTile(row, col, -1,0, 1);
+            }
+        }
+    }
+
+    //May need to switch with up. Backwards maybe.
+    public void moveUp()
+    {
+        for(int col = 0; col < GAME_SIZE; col++) {
+            for (int row = 0; row < GAME_SIZE; row++) {
+                row += findAndMoveTile(row, col, 1,0, -1);
+            }
+        }
     }
 
 

@@ -16,5 +16,9 @@ public class Main {
         Game.importStaringPosition();
         Game.printBoard();
 
+        Game.moveDown();
+        System.out.println("*************");
+        Game.printBoard();
+
     }
 }
