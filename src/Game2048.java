@@ -129,7 +129,7 @@ public class Game2048 {
         int col = 0;
 
         numberTests = inputFile.nextInt();
-        System.out.println("We will run " + numberTests + " number of tests.");
+        System.out.println("We will run the following number of tests: " + numberTests + ".");
 
 
 
@@ -149,12 +149,15 @@ public class Game2048 {
         }
     }
 
-
-    public void combineNumbers()
+    /**
+     * This method will scan the entire board and look for the highest number
+     * @return the highest number found.
+     */
+    public int scanForScore()
     {
-
-
+        return 1;
     }
+
 
 
     public boolean inBounds(int x, int y)
@@ -220,7 +223,8 @@ public class Game2048 {
         }
     }
 
-    //May need to switch with up. Backwards maybe.
+
+
     public void moveUp()
     {
         for(int col = 0; col < GAME_SIZE; col++) {
