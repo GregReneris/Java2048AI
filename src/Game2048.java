@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.Math;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 /**
@@ -113,9 +115,14 @@ public class Game2048 {
      * imports starting state from 2048_in.txt
      */
     public void importStaringPosition() throws FileNotFoundException {
-        final String FILENAME = "C:\\Users\\greg\\IdeaProjects\\AI\\Java2048AI\\src\\2048_in.txt";
+//        final String FILENAME = "C:\\Users\\greg\\IdeaProjects\\Java2048AI\\src\\2048_in.txt";
 
-        File file = new File(FILENAME);
+        //to deal with different IDEs and relative paths
+        Path exists = Paths.get("src\\2048_in.txt");
+        String FILENAME2 = exists.toAbsolutePath().toString();
+
+        //File file = new File(FILENAME);
+        File file = new File(FILENAME2);
         Scanner inputFile = new Scanner(file);
         int numberOfTests;
         int numberTests = 0;
