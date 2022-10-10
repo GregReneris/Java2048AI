@@ -8,28 +8,44 @@ import java.util.Scanner;
 /**
  * The class to run and build the 2048 game.
  */
-public class Game2048 {
-
-    //TODO: add a board class that are just game states.
-
-    //TODO: Add deterministic number spawning.
+public class Board {
 
     //TODO: Create a tree of nodes to hold board states.
+    //BFS page 87 of handout
 
+    private static final int GAME_SIZE = 4;
 
-    private final int GAME_SIZE = 4;
+    private final int[][] gameBoard;  //represents 4x4 grid for the game.
 
-    private int[][] gameBoard = new int[GAME_SIZE][GAME_SIZE]; //represents 4x4 grid for the game.
+    private int depth = 0;
 
     /**
      * default constructor to init a new game.
      */
-    public Game2048()
+    public Board()
     {
+        gameBoard = new int[GAME_SIZE][GAME_SIZE];
+
         newGame();
 
         System.out.println("Welcome to 2048");
     }
+
+    /**
+     * constructor to handle depth.
+     * @param depth
+     * @param gameBoard
+     */
+    public Board(int depth, int[][] gameBoard)
+    {
+        this.depth = depth;
+        this.gameBoard = gameBoard.clone();
+
+        //newGame(); //causes all boards to reset.
+
+        System.out.println("New instance of board game");
+    }
+
 
     public void newGame()
     {
@@ -57,7 +73,7 @@ public class Game2048 {
     public void printBoard() {
 
         System.out.print(" ");
-        for (int i = 0; i < gameBoard.length; i++) {
+        for (int i = 0; i < this.gameBoard.length; i++) {
             System.out.print("_______");
         }
         System.out.print("\n");
@@ -78,7 +94,13 @@ public class Game2048 {
         }
     }
 
+    public int getDepth() {
+        return depth;
+    }
 
+    public int[][] getGameBoard() {
+        return gameBoard;
+    }
 
     //public void instantiateBeginningState()
     //{
@@ -153,9 +175,23 @@ public class Game2048 {
      * This method will scan the entire board and look for the highest number
      * @return the highest number found.
      */
-    public int scanForScore()
+    public int getCurrentScore()
     {
-        return 1;
+        int currentHigh = 0;
+        int readScore;
+
+        for(int row = 0; row < GAME_SIZE; row++)
+        {
+
+            for (int col = 0; col < GAME_SIZE; col++)
+            {
+                readScore = gameBoard[row][col];
+
+                if(readScore > currentHigh)
+                    currentHigh = readScore;
+            }
+        }
+        return currentHigh;
     }
 
 
@@ -166,23 +202,23 @@ public class Game2048 {
     }
 
 
-    public int findAndMoveTile(int row, int col,int drow,int dcol, int retry)
+    private int findAndMoveTile(int row, int col,int drow,int dcol, int retry)
     {
         int crow = row+drow;
         int ccol = col+dcol;
 
         while(inBounds(crow,ccol))
         {
-            if(gameBoard[crow][ccol] != 0)
+            if(this.gameBoard[crow][ccol] != 0)
             {
-                int v = gameBoard[crow][ccol];
-                if(gameBoard[crow][ccol] == gameBoard[row][col] || gameBoard[row][col] == 0)
+                int v = this.gameBoard[crow][ccol];
+                if(this.gameBoard[crow][ccol] == this.gameBoard[row][col] || this.gameBoard[row][col] == 0)
                 {
-                    gameBoard[row][col] += gameBoard[crow][ccol];
-                    gameBoard[crow][ccol] = 0;
+                    this.gameBoard[row][col] += this.gameBoard[crow][ccol];
+                    this.gameBoard[crow][ccol] = 0;
                 }
 
-                return (gameBoard[row][col] == v ? retry : 0);
+                return (this.gameBoard[row][col] == v ? retry : 0);
             }
             //if we did not find a match and move.
             crow += drow;
