@@ -32,17 +32,25 @@ public class Board {
     }
 
     /**
+     * TODO: ONLY PASS IN GAME OBJECT.
      * constructor to handle depth.
      * @param depth
-     * @param gameBoard
+     * @param
      */
-    public Board(int depth, int[][] gameBoard)
+    public Board(int depth, int[][] gameBoardOrig)
     {
         this.depth = depth;
-        this.gameBoard = gameBoard.clone();
 
+        this.gameBoard = new int[GAME_SIZE][GAME_SIZE];
+
+        //deep copy the board.
+        for (int row = 0; row < gameBoard.length; row++) {
+            //prints out the boxes and X and O
+            for (int col = 0; col < gameBoard[row].length; col++) {
+                this.gameBoard[row][col] = gameBoardOrig[row][col];
+            }
+        }
         //newGame(); //causes all boards to reset.
-
         System.out.println("New instance of board game");
     }
 

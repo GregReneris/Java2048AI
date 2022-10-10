@@ -23,10 +23,11 @@ public class Main {
         System.out.println("*************");
         Game.printBoard();
 
+        //just pass in game.
         Board Game2 =  new Board(Game.getDepth(), Game.getGameBoard());
 
-        System.out.println(Game + " gb " + Game.getGameBoard());
-        System.out.println(Game2 + " gb " + Game2.getGameBoard());
+        System.out.println(Game + " gb " + Game.getGameBoard() [0]);
+        System.out.println(Game2 + " gb " + Game2.getGameBoard() [0]);
 
         Game2.moveRight();
 
