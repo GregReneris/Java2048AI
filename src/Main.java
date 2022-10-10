@@ -4,7 +4,7 @@
  * Uses algorithms to determine optimal path for the highest score.
  *
  */
-
+import java.util.Queue;
 import java.io.FileNotFoundException;
 
 /**
@@ -15,8 +15,8 @@ import java.io.FileNotFoundException;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
-	// write your code here
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
+        int maxDepth = 3;
 
         //create the game object.
         Board game = new Board();
@@ -41,45 +41,73 @@ public class Main {
         System.out.println(game + " gb " + game.getGameBoard() [0]);
         System.out.println(game2 + " gb " + game2.getGameBoard() [0]);
 
-        game2.moveRight();
-
-        System.out.println("Printing game 2");
-        game2.printBoard();
-        game.printBoard();
-
-
-//        System.out.println("222222222");
-//        game.addNextNumber();
-//        game.printBoard();
-//
-//        game.moveLeft();
-//        game.addNextNumber();
-//        System.out.println("3333333: CS : " + game.getCurrentScore());
-//        game.printBoard();
-//
-//
-//        game.moveUp();
-//        game.addNextNumber();
-//
-//        System.out.println("444444: CS : " + game.getCurrentScore());
-//        game.printBoard();
-//
-//        game.moveLeft();
-//        game.addNextNumber();
-//        System.out.println("555555: CS : " + game.getCurrentScore());
-//        game.printBoard();
-
-
-
 
     }
 
 
 
-    public static String breadthFirstSearch()
-    {
+    //outside of breadthFirstSearch will still need to compare
+    //to the highest score or first solution found.
+    //if bfs returns null, then it failed.
 
-        return "Solution or failure.";
+    public static Board breadthFirstSearch(Board GameNode,int maxDepth)
+    {
+        int score = 0;
+        Board Solution = null;
+        Queue<Board> frontier = null;
+        Queue<Board> explored = null;
+        boolean foundSolution = true;
+
+        frontier.add(GameNode);
+
+        //check to see if gameNode's depth is equal to maxDepth.
+        //if so, return solution.
+        if(GameNode.getDepth() == maxDepth)
+        {
+            Solution = GameNode;
+            return Solution;
+        }
+
+        do {
+            if(frontier.isEmpty())
+            {
+                foundSolution = false;
+            }
+        } while (foundSolution == true);
+
+        GameNode = frontier.poll(); //supposed to choose node with shallowest depth.
+        explored.add(GameNode); //not sure this is right. Might want earlier node with state.
+
+        for(int i = 1; i < 5; i ++)
+        {
+            switch(i)
+            {
+                case 1:
+                    Board game1 = new Board(GameNode);
+                    game1.moveUp();
+                    game1.addToStringOrder("Move Up");
+
+
+                case 2:
+                    Board game2 = new Board(GameNode);
+                    game2.moveDown();
+                    game2.addToStringOrder("Move Down");
+
+                case 3:
+                    Board game3 = new Board(GameNode);
+                    game3.moveLeft();
+                    game3.addToStringOrder("Move Left");
+
+                case 4:
+                    Board game4 = new Board(GameNode);
+                    game4.moveRight();
+                    game4.addToStringOrder("Move Right");
+
+            }
+        }
+
+
+        return null;
     }
 
 

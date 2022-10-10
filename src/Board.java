@@ -21,6 +21,8 @@ public class Board {
 
     private int score = 0;
 
+    private String movesToGetHere = " ";
+
     /**
      * default constructor to init a new game.
      */
@@ -213,6 +215,15 @@ public class Board {
     public int getScore()
     {
         return score;
+    }
+
+    /**
+     * Adds a command to the string history.
+     * @param command
+     */
+    public void addToStringOrder(String command)
+    {
+        this.movesToGetHere += command;
     }
 
     public boolean inBounds(int x, int y)
