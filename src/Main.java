@@ -50,6 +50,8 @@ public class Main {
     //to the highest score or first solution found.
     //if bfs returns null, then it failed.
 
+    //note/tod-o, BFS may require a full tree before running.
+
     public static Board breadthFirstSearch(Board GameNode,int maxDepth)
     {
         int score = 0;
@@ -86,7 +88,7 @@ public class Main {
                     Board game1 = new Board(GameNode);
                     game1.moveUp();
                     game1.addToStringOrder("Move Up");
-
+                    // Child / Solution ?
 
                 case 2:
                     Board game2 = new Board(GameNode);
