@@ -17,7 +17,7 @@ public class Board {
 
     private final int[][] gameBoard;  //represents 4x4 grid for the game.
 
-    private int depth = 0;
+    private int depth = 0; //also known as the cost.
 
     private int score = 0;
 
@@ -34,12 +34,14 @@ public class Board {
     }
 
     /**
-     * constructor to handle making a new copy..
+     * constructor to handle making a new copy,
+     * The copy should have a depth of +1.
      * @param originalGame
      */
     public Board(Board originalGame)
     {
         this.depth = originalGame.getDepth();
+        this.depth = this.depth+1;
 
         this.score = originalGame.getScore();
 
