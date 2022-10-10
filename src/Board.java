@@ -19,6 +19,8 @@ public class Board {
 
     private int depth = 0;
 
+    private int score = 0;
+
     /**
      * default constructor to init a new game.
      */
@@ -32,20 +34,23 @@ public class Board {
     }
 
     /**
-     * TODO: ONLY PASS IN GAME OBJECT.
-     * constructor to handle depth.
-     * @param depth
-     * @param
+     * constructor to handle making a new copy..
+     * @param originalGame
      */
-    public Board(int depth, int[][] gameBoardOrig)
+    public Board(Board originalGame)
     {
-        this.depth = depth;
+        this.depth = originalGame.getDepth();
+
+        this.score = originalGame.getScore();
 
         this.gameBoard = new int[GAME_SIZE][GAME_SIZE];
+
+        int[][] gameBoardOrig = originalGame.getGameBoard();
 
         //deep copy the board.
         for (int row = 0; row < gameBoard.length; row++) {
             //prints out the boxes and X and O
+            // manual array copy.
             for (int col = 0; col < gameBoard[row].length; col++) {
                 this.gameBoard[row][col] = gameBoardOrig[row][col];
             }
@@ -199,10 +204,14 @@ public class Board {
                     currentHigh = readScore;
             }
         }
+        this.score = currentHigh;
         return currentHigh;
     }
 
-
+    public int getScore()
+    {
+        return score;
+    }
 
     public boolean inBounds(int x, int y)
     {

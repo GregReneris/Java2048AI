@@ -1,5 +1,17 @@
+/**
+ * A program that creates and runs version of 2048.
+ * Coded in Java (using version 18).
+ * Uses algorithms to determine optimal path for the highest score.
+ *
+ */
+
 import java.io.FileNotFoundException;
 
+/**
+ * Main class creates and then runs the 2048 game and
+ * associated search algorithms. Takes in states from an input file and
+ * also outputs it to another text file.
+ */
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -7,55 +19,55 @@ public class Main {
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
 
         //create the game object.
-        Board Game = new Board();
-        Game.makeBoardEmpty();
+        Board game = new Board();
+        game.makeBoardEmpty();
 
         //ensuring the board is empty each time.
-        Game.printBoard();
+        game.printBoard();
 
-        System.out.println(Game + " gb " + Game.getGameBoard());
+        System.out.println(game + " gb " + game.getGameBoard());
 
 
-        Game.importStaringPosition();
-        Game.printBoard();
+        game.importStaringPosition();
+        game.printBoard();
 
-        Game.moveDown();
+        game.moveDown();
         System.out.println("*************");
-        Game.printBoard();
+        game.printBoard();
 
         //just pass in game.
-        Board Game2 =  new Board(Game.getDepth(), Game.getGameBoard());
+        Board game2 =  new Board(game);
 
-        System.out.println(Game + " gb " + Game.getGameBoard() [0]);
-        System.out.println(Game2 + " gb " + Game2.getGameBoard() [0]);
+        System.out.println(game + " gb " + game.getGameBoard() [0]);
+        System.out.println(game2 + " gb " + game2.getGameBoard() [0]);
 
-        Game2.moveRight();
+        game2.moveRight();
 
         System.out.println("Printing game 2");
-        Game2.printBoard();
-        Game.printBoard();
+        game2.printBoard();
+        game.printBoard();
 
 
 //        System.out.println("222222222");
-//        Game.addNextNumber();
-//        Game.printBoard();
+//        game.addNextNumber();
+//        game.printBoard();
 //
-//        Game.moveLeft();
-//        Game.addNextNumber();
-//        System.out.println("3333333: CS : " + Game.getCurrentScore());
-//        Game.printBoard();
+//        game.moveLeft();
+//        game.addNextNumber();
+//        System.out.println("3333333: CS : " + game.getCurrentScore());
+//        game.printBoard();
 //
 //
-//        Game.moveUp();
-//        Game.addNextNumber();
+//        game.moveUp();
+//        game.addNextNumber();
 //
-//        System.out.println("444444: CS : " + Game.getCurrentScore());
-//        Game.printBoard();
+//        System.out.println("444444: CS : " + game.getCurrentScore());
+//        game.printBoard();
 //
-//        Game.moveLeft();
-//        Game.addNextNumber();
-//        System.out.println("555555: CS : " + Game.getCurrentScore());
-//        Game.printBoard();
+//        game.moveLeft();
+//        game.addNextNumber();
+//        System.out.println("555555: CS : " + game.getCurrentScore());
+//        game.printBoard();
 
 
 
