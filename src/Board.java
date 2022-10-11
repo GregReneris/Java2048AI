@@ -23,6 +23,8 @@ public class Board {
 
     private String movesToGetHere = " ";
 
+    public Board[] listOfChildren = new Board[4]; // holds the 4 child Boards.
+
     /**
      * default constructor to init a new game.
      */
@@ -214,6 +216,7 @@ public class Board {
 
     public int getScore()
     {
+        getCurrentScore();
         return score;
     }
 

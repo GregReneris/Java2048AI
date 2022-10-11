@@ -6,6 +6,8 @@
  */
 import java.util.Queue;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
+
 
 /**
  * Main class creates and then runs the 2048 game and
@@ -17,6 +19,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
         int maxDepth = 3;
+
 
         //create the game object.
         Board game = new Board();
@@ -43,6 +46,54 @@ public class Main {
 
 
     }
+
+
+    public static Board makeTreeNDeep(Board GameNode, int maxDepth)
+    {
+        int currentDepth = GameNode.getDepth();
+
+        //create boards going down to desired depth.
+        for(int i = 0; i < maxDepth; i++)
+        {
+            //each board will get 4 children, with each move.
+            for(int j = 1; i < 5; i ++)
+            {
+                switch(j)
+                {
+                    case 1:
+                        Board game1 = new Board(GameNode);
+                        game1.moveUp();
+                        game1.addToStringOrder("Move Up");
+                        game1.getScore();
+                        break;
+
+                    case 2:
+                        Board game2 = new Board(GameNode);
+                        game2.moveDown();
+                        game2.addToStringOrder("Move Down");
+                        game2.getScore();
+                        break;
+
+                    case 3:
+                        Board game3 = new Board(GameNode);
+                        game3.moveLeft();
+                        game3.addToStringOrder("Move Left");
+                        game3.getScore();
+                        break;
+
+                    case 4:
+                        Board game4 = new Board(GameNode);
+                        game4.moveRight();
+                        game4.addToStringOrder("Move Right");
+                        game4.getScore();
+                        break;
+                }
+        }
+    }
+
+
+
+
 
 
 
