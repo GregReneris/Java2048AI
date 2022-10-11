@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.lang.Math;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -296,6 +297,47 @@ public class Board {
 
         return 0;
     }
+
+    //pretty much need a new function to see if any spaces on the board are
+    //greater than 2
+
+    //OR
+
+    // make a list of the numbers and counts of them on the board.
+    //if there are any increases in value number count, add that to the score.
+    //ignore 2's and 0's.
+
+    public int scoreIncrease(Board gameBoard)
+    {
+        HashMap<Integer, Integer> boardMap = new HashMap<Integer, Integer>();
+        int roundScore = 0;
+        int numberInput = 0;
+        int existingCount = 0;
+
+        for(int row = 0; row < GAME_SIZE; row++)
+        {
+            for(int col = 0; col < GAME_SIZE; col++)
+            {
+                numberInput = this.gameBoard[row][col];
+                if(boardMap.get(numberInput) == 0)
+                {
+                    existingCount = 1;
+                }
+
+                boardMap.get(numberInput);
+
+
+                boardMap.put(1,1);
+                boardMap.put(numberInput, existingCount);
+            }
+        }
+
+        System.out.println("total score for this round is: " + roundScore);
+        return 0;
+    }
+
+
+
 
     public void moveRight()
     {

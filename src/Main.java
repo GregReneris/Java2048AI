@@ -44,6 +44,7 @@ public class Main {
         System.out.println(solution.movesToGetHere);
         System.out.println("Solution score" + solution.getScore());
 
+        game.scoreIncrease(game);
 
         //just pass in game.
         //Board game2 =  new Board(game);
