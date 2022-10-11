@@ -4,13 +4,21 @@ import java.lang.Math;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * The class to run and build the 2048 game.
  */
 public class Board {
 
-    //TODO: Create a tree of nodes to hold board states.
+
+    enum Direction {
+        UP,
+        RIGHT,
+        DOWN,
+        LEFT
+    }
+
     //BFS page 87 of handout
 
     private static final int GAME_SIZE = 4;
@@ -21,9 +29,10 @@ public class Board {
 
     private int score = 0;
 
-    private String movesToGetHere = " ";
 
-    public Board[] listOfChildren = new Board[4]; // holds the 4 child Boards.
+    public ArrayList<Direction> movesToGetHere = new ArrayList<Direction>();
+
+    public Board parent = null;
 
     /**
      * default constructor to init a new game.
@@ -42,14 +51,18 @@ public class Board {
      * The copy should have a depth of +1.
      * @param originalGame
      */
-    public Board(Board originalGame)
+    public Board(Board originalGame, Direction move)
     {
-        this.depth = originalGame.getDepth();
-        this.depth = this.depth+1;
-
-        this.score = originalGame.getScore();
+        this.depth = originalGame.depth+1;
 
         this.gameBoard = new int[GAME_SIZE][GAME_SIZE];
+
+        this.movesToGetHere = (ArrayList<Direction>) originalGame.movesToGetHere.clone();
+
+        this.parent = originalGame;
+
+        this.score = originalGame.score;
+        //round score would be this score - parent score.
 
         int[][] gameBoardOrig = originalGame.getGameBoard();
 
@@ -62,7 +75,29 @@ public class Board {
             }
         }
         //newGame(); //causes all boards to reset.
-        System.out.println("New instance of board game");
+
+        switch (move){
+            case UP:
+                this.moveUp();
+                break;
+
+            case RIGHT:
+                this.moveRight();
+                break;
+
+
+            case DOWN:
+                this.moveDown();
+                break;
+
+            case LEFT:
+                this.moveLeft();
+                break;
+
+
+        }
+
+
     }
 
 
@@ -120,14 +155,6 @@ public class Board {
     public int[][] getGameBoard() {
         return gameBoard;
     }
-
-    //public void instantiateBeginningState()
-    //{
-    //    int position1x;
-    //    int position1y;
-    //    int postition2x;
-    //    int postition2y;
-    //    }
 
     /**
      * Adds a two to the next vertically free space, going left to right, top to bottom.
@@ -194,40 +221,40 @@ public class Board {
      * This method will scan the entire board and look for the highest number
      * @return the highest number found.
      */
-    public int getCurrentScore()
-    {
-        int currentHigh = 0;
-        int readScore;
+//    public int getCurrentScore()
+//    {
+//        int currentHigh = 0;
+//        int readScore;
+//
+//        for(int row = 0; row < GAME_SIZE; row++)
+//        {
+//
+//            for (int col = 0; col < GAME_SIZE; col++)
+//            {
+//                readScore = gameBoard[row][col];
+//
+//                if(readScore > currentHigh)
+//                    currentHigh = readScore;
+//            }
+//        }
+//        this.score = currentHigh;
+//        return currentHigh;
+//    }
 
-        for(int row = 0; row < GAME_SIZE; row++)
-        {
-
-            for (int col = 0; col < GAME_SIZE; col++)
-            {
-                readScore = gameBoard[row][col];
-
-                if(readScore > currentHigh)
-                    currentHigh = readScore;
-            }
-        }
-        this.score = currentHigh;
-        return currentHigh;
-    }
 
     public int getScore()
     {
-        getCurrentScore();
         return score;
     }
 
-    /**
-     * Adds a command to the string history.
-     * @param command
-     */
-    public void addToStringOrder(String command)
-    {
-        this.movesToGetHere += command;
-    }
+//    /**
+//     * Adds a command to the string history.
+//     * @param command
+//     */
+//    public void addToStringOrder(String command)
+//    {
+//        this.movesToGetHere += command;
+//    }
 
     public boolean inBounds(int x, int y)
     {
@@ -251,6 +278,15 @@ public class Board {
                     this.gameBoard[crow][ccol] = 0;
                 }
 
+                //the move's score.
+                //Not sure if the score should account for the highest combo, or all combos in the move.
+                //it is also adding every moved piece.
+                if(gameBoard[row][col] != v)
+                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
+                {
+                    score += gameBoard[row][col];
+                }
+
                 return (this.gameBoard[row][col] == v ? retry : 0);
             }
             //if we did not find a match and move.
@@ -268,6 +304,8 @@ public class Board {
                 col += findAndMoveTile(row, col, 0,-1, 1);
             }
         }
+        movesToGetHere.add(Direction.RIGHT);
+        addNextNumber();
     }
 
 
@@ -281,6 +319,8 @@ public class Board {
                 col += findAndMoveTile(row, col, 0,1, -1);
             }
         }
+        movesToGetHere.add(Direction.LEFT);
+        addNextNumber();
     }
 
     public void moveDown()
@@ -290,6 +330,8 @@ public class Board {
                 row += findAndMoveTile(row, col, -1,0, 1);
             }
         }
+        movesToGetHere.add(Direction.DOWN);
+        addNextNumber();
     }
 
 
@@ -301,6 +343,8 @@ public class Board {
                 row += findAndMoveTile(row, col, 1,0, -1);
             }
         }
+        movesToGetHere.add(Direction.UP);
+        addNextNumber();
     }
 
 

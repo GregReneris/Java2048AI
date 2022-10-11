@@ -4,6 +4,7 @@
  * Uses algorithms to determine optimal path for the highest score.
  *
  */
+import java.util.ArrayDeque;
 import java.util.Queue;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -18,8 +19,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
-        int maxDepth = 3;
-
+        Board solution = null;
 
         //create the game object.
         Board game = new Board();
@@ -34,62 +34,74 @@ public class Main {
         game.importStaringPosition();
         game.printBoard();
 
-        game.moveDown();
-        System.out.println("*************");
-        game.printBoard();
+//        game.moveDown();
+//        game.printBoard();
+
+        solution = breadthFirstSearch(game);
+
+        System.out.println("Solution board: ");
+        solution.printBoard();
+        System.out.println(solution.movesToGetHere);
+        System.out.println("Solution score" + solution.getScore());
+
 
         //just pass in game.
-        Board game2 =  new Board(game);
+        //Board game2 =  new Board(game);
 
-        System.out.println(game + " gb " + game.getGameBoard() [0]);
-        System.out.println(game2 + " gb " + game2.getGameBoard() [0]);
+//        System.out.println(game + " gb " + game.getGameBoard() [0]);
+//        System.out.println(game2 + " gb " + game2.getGameBoard() [0]);
+
+
 
 
     }
 
 
-    public static Board makeTreeNDeep(Board GameNode, int maxDepth)
-    {
-        int currentDepth = GameNode.getDepth();
+//    public static Board makeTreeNDeep(Board GameNode, int maxDepth) {
+//        int currentDepth = GameNode.getDepth();
+//
+//
+//        //create boards going down to desired depth.
+//        for (int i = 0; i < maxDepth; i++) {
+//            //each board will get 4 children, with each move.
+//            for (int j = 1; i < 5; i++) {
+//                switch (j) {
+//                    case 1:
+//                        Board game1 = new Board(GameNode);
+//                        game1.moveUp();
+//                        game1.addToStringOrder("Move Up");
+//                        game1.getScore();
+//                        break;
+//
+//                    case 2:
+//                        Board game2 = new Board(GameNode);
+//                        game2.moveDown();
+//                        game2.addToStringOrder("Move Down");
+//                        game2.getScore();
+//                        break;
+//
+//                    case 3:
+//                        Board game3 = new Board(GameNode);
+//                        game3.moveLeft();
+//                        game3.addToStringOrder("Move Left");
+//                        game3.getScore();
+//                        break;
+//
+//                    case 4:
+//                        Board game4 = new Board(GameNode);
+//                        game4.moveRight();
+//                        game4.addToStringOrder("Move Right");
+//                        game4.getScore();
+//                        break;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
-        //create boards going down to desired depth.
-        for(int i = 0; i < maxDepth; i++)
-        {
-            //each board will get 4 children, with each move.
-            for(int j = 1; i < 5; i ++)
-            {
-                switch(j)
-                {
-                    case 1:
-                        Board game1 = new Board(GameNode);
-                        game1.moveUp();
-                        game1.addToStringOrder("Move Up");
-                        game1.getScore();
-                        break;
 
-                    case 2:
-                        Board game2 = new Board(GameNode);
-                        game2.moveDown();
-                        game2.addToStringOrder("Move Down");
-                        game2.getScore();
-                        break;
 
-                    case 3:
-                        Board game3 = new Board(GameNode);
-                        game3.moveLeft();
-                        game3.addToStringOrder("Move Left");
-                        game3.getScore();
-                        break;
 
-                    case 4:
-                        Board game4 = new Board(GameNode);
-                        game4.moveRight();
-                        game4.addToStringOrder("Move Right");
-                        game4.getScore();
-                        break;
-                }
-        }
-    }
 
 
 
@@ -103,64 +115,37 @@ public class Main {
 
     //note/tod-o, BFS may require a full tree before running.
 
-    public static Board breadthFirstSearch(Board GameNode,int maxDepth)
+    public static Board breadthFirstSearch(Board gameNode)
     {
-        int score = 0;
-        Board Solution = null;
-        Queue<Board> frontier = null;
-        Queue<Board> explored = null;
-        boolean foundSolution = true;
+        Board bestSolution = gameNode;
+        int counter = 0;
 
-        frontier.add(GameNode);
+        //a funky class that can work like both a stack and a queue.
+        //use .add and .remove for queue functions.
+        ArrayDeque<Board> work = new ArrayDeque<Board>();
+        work.add(gameNode);
 
-        //check to see if gameNode's depth is equal to maxDepth.
-        //if so, return solution.
-        if(GameNode.getDepth() == maxDepth)
+        while(!work.isEmpty())
         {
-            Solution = GameNode;
-            return Solution;
-        }
-
-        do {
-            if(frontier.isEmpty())
+            gameNode = work.remove(); //pop first Board off.
+            if(gameNode.getScore() > bestSolution.getScore())
             {
-                foundSolution = false;
+                bestSolution = gameNode;
             }
-        } while (foundSolution == true);
-
-        GameNode = frontier.poll(); //supposed to choose node with shallowest depth.
-        explored.add(GameNode); //not sure this is right. Might want earlier node with state.
-
-        for(int i = 1; i < 5; i ++)
-        {
-            switch(i)
+            if(gameNode.getDepth() < 3 )
             {
-                case 1:
-                    Board game1 = new Board(GameNode);
-                    game1.moveUp();
-                    game1.addToStringOrder("Move Up");
-                    // Child / Solution ?
-
-                case 2:
-                    Board game2 = new Board(GameNode);
-                    game2.moveDown();
-                    game2.addToStringOrder("Move Down");
-
-                case 3:
-                    Board game3 = new Board(GameNode);
-                    game3.moveLeft();
-                    game3.addToStringOrder("Move Left");
-
-                case 4:
-                    Board game4 = new Board(GameNode);
-                    game4.moveRight();
-                    game4.addToStringOrder("Move Right");
-
+                work.add(new Board(gameNode, Board.Direction.UP));
+                work.add(new Board(gameNode, Board.Direction.RIGHT));
+                work.add(new Board(gameNode, Board.Direction.DOWN));
+                work.add(new Board(gameNode, Board.Direction.LEFT));
             }
+            else{
+            }
+            counter++;
+
         }
-
-
-        return null;
+        System.out.println(counter);
+        return bestSolution;
     }
 
 
