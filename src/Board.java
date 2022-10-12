@@ -202,12 +202,12 @@ public class Board {
         System.out.println("We will run the following number of tests: " + numberTests + ".");
 
 
-
         for(int testNumber = 0; testNumber < numberTests; testNumber++ )
         {
 
             for(int row = 0; row < GAME_SIZE; row++)
             {
+                //after first iteration, now on line 6 to start next board state test.
                 String newInput = inputFile.next();
                 String[] split = newInput.split(",", 4);
 
@@ -215,6 +215,9 @@ public class Board {
                 {
                     gameBoard[row][col] = Integer.parseInt(split[col]);
                 }
+
+                //maybe run solution bfs here?
+
             }
         }
     }

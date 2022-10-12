@@ -39,12 +39,6 @@ public class Main {
         game.importStaringPosition();
         game.printBoard();
 
-//        game.moveRight();
-//        game.moveUp();
-//        game.moveUp();
-//
-//        game.printBoard();
-
 
         solution = breadthFirstSearch(game);
 
@@ -62,7 +56,7 @@ public class Main {
     private static String addInfoToResults(Board solution) {
         String results ="";
 
-        results = solution.getScore() + " , ";
+        results = solution.getScore() + ",";
         ArrayList enumArray = solution.movesToGetHere;
 
         //For some odd reason, the switch statement just wouldn't compile happily.
