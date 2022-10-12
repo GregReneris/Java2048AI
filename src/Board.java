@@ -1,11 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.Math;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The class to run and build the 2048 game.
@@ -248,14 +249,6 @@ public class Board {
         return score;
     }
 
-//    /**
-//     * Adds a command to the string history.
-//     * @param command
-//     */
-//    public void addToStringOrder(String command)
-//    {
-//        this.movesToGetHere += command;
-//    }
 
     public boolean inBounds(int x, int y)
     {
@@ -282,11 +275,12 @@ public class Board {
                 //the move's score.
                 //Not sure if the score should account for the highest combo, or all combos in the move.
                 //it is also adding every moved piece.
-                if(gameBoard[row][col] != v)
-                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
-                {
-                    score += gameBoard[row][col];
-                }
+
+//                if(gameBoard[row][col] != v)
+//                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
+//                {
+//                    score += gameBoard[row][col];
+//                }
 
                 return (this.gameBoard[row][col] == v ? retry : 0);
             }
@@ -306,41 +300,79 @@ public class Board {
     // make a list of the numbers and counts of them on the board.
     //if there are any increases in value number count, add that to the score.
     //ignore 2's and 0's.
-
-    public int scoreIncrease(Board gameBoard)
+    public HashMap<Integer, Integer> createBoardMap(Board gameBoard)
     {
         HashMap<Integer, Integer> boardMap = new HashMap<Integer, Integer>();
-        int roundScore = 0;
         int numberInput = 0;
-        int existingCount = 0;
 
         for(int row = 0; row < GAME_SIZE; row++)
         {
             for(int col = 0; col < GAME_SIZE; col++)
             {
                 numberInput = this.gameBoard[row][col];
-                if(boardMap.get(numberInput) == 0)
-                {
-                    existingCount = 1;
-                }
-
-                boardMap.get(numberInput);
-
-
-                boardMap.put(1,1);
-                boardMap.put(numberInput, existingCount);
+                boardMap.merge(numberInput, 1, Integer::sum);
             }
         }
 
-        System.out.println("total score for this round is: " + roundScore);
-        return 0;
+//        System.out.println(boardMap);
+//        for( boardMap<Integer, Integer> entry : boardMap.entrySet() ){
+//            System.out.println( entry.getKey() + " = " + entry.getValue() );
+//        }
+
+        return boardMap;
+    }
+
+    /**
+     * A method that compares the key value pairs of everything in the two grids.
+     * If a key(a number > 2) gains an additional value greater than what was there before,
+     * that adds to that rounds' score.
+     * @param origMap orignal map
+     * @param newMap new map after the move operation.
+     * @return the score for the round.
+     */
+    private int compareMaps(HashMap<Integer, Integer> origMap, HashMap<Integer, Integer> newMap)
+    {
+        int roundScore = 0;
+        Integer keyValue;
+        int difference;
+
+        for (Map.Entry<Integer, Integer> entry : newMap.entrySet()) {
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+
+            //if the newMap has a key original map does not.
+            if((!origMap.containsKey(key) && newMap.containsKey(key)))
+            {
+                difference = newMap.get(key); // for consistency.
+                roundScore += (key * difference);
+            }
+
+            if ((origMap.containsKey(key) && key > 2)) {
+
+                if (newMap.get(key) > origMap.get(key)) {
+
+                    difference = newMap.get(key) - origMap.get(key);
+
+                    roundScore += (key * difference);
+                }
+            }
+        }
+
+        System.out.println(this.depth);
+        System.out.println("Round score is: " + roundScore + " on board depth " + this.getDepth() + "." );
+        return roundScore;
     }
 
 
-
+    /**
+     * ADDING COMPARE MAPS TO MANAGE SCORE AND =+ them!
+     */
 
     public void moveRight()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
+
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = GAME_SIZE-1; col >= 0; col--) {
                 col += findAndMoveTile(row, col, 0,-1, 1);
@@ -348,14 +380,17 @@ public class Board {
         }
         movesToGetHere.add(Direction.RIGHT);
         addNextNumber();
+
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
-
-
-
 
 
     public void moveLeft()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = 0; col < GAME_SIZE; col++) {
                 col += findAndMoveTile(row, col, 0,1, -1);
@@ -363,10 +398,16 @@ public class Board {
         }
         movesToGetHere.add(Direction.LEFT);
         addNextNumber();
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
 
     public void moveDown()
     {
+
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = GAME_SIZE-1; row >= 0; row--) {
                 row += findAndMoveTile(row, col, -1,0, 1);
@@ -374,12 +415,18 @@ public class Board {
         }
         movesToGetHere.add(Direction.DOWN);
         addNextNumber();
+
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
 
 
 
     public void moveUp()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = 0; row < GAME_SIZE; row++) {
                 row += findAndMoveTile(row, col, 1,0, -1);
@@ -387,7 +434,13 @@ public class Board {
         }
         movesToGetHere.add(Direction.UP);
         addNextNumber();
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
+
     }
+
+
 
 
 }
