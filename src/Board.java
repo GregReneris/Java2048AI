@@ -313,12 +313,6 @@ public class Board {
                 boardMap.merge(numberInput, 1, Integer::sum);
             }
         }
-
-//        System.out.println(boardMap);
-//        for( boardMap<Integer, Integer> entry : boardMap.entrySet() ){
-//            System.out.println( entry.getKey() + " = " + entry.getValue() );
-//        }
-
         return boardMap;
     }
 
