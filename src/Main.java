@@ -18,11 +18,12 @@ import java.io.File;
  * associated search algorithms. Takes in states from an input file and
  * outputs test results to another text file.
  *
- * Uses BFS and assumes that every doubling adds to that rounds "score", and
- * excludes 2's and 0's.
+ * Uses BFS and assumes that every doubling adds to that rounds "score" and
+ * excludes 2's and 0's. When there are multiple doubles in one turn, those
+ * doubles will combine to make a higher score. An 8 and a 16 result in a 24, for example.
  *
  * The BFS goes 3 deep, and chooses at each level the board node with the highest
- * score. It checks all options as BFS, but chooses for a solution.
+ * score. It checks all options as BFS, but chooses highest to return as a solution.
  */
 public class Main {
 
