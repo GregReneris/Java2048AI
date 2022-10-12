@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The class to run and build the 2048 game.
@@ -42,10 +41,7 @@ public class Board {
     public Board()
     {
         gameBoard = new int[GAME_SIZE][GAME_SIZE];
-
         newGame();
-
-        System.out.println("Welcome to 2048");
     }
 
     /**
@@ -121,6 +117,11 @@ public class Board {
                 gameBoard[i][j] = 0;
             }
         }
+    }
+
+    public void setGameTile(int row, int col, int value)
+    {
+        gameBoard[row][col] = value;
     }
 
     /**
@@ -216,11 +217,13 @@ public class Board {
                     gameBoard[row][col] = Integer.parseInt(split[col]);
                 }
 
-                //maybe run solution bfs here?
+                //maybe run solution bfs here and record results to a static string
 
             }
         }
     }
+
+
 
     /**
      * This method will scan the entire board and look for the highest number
@@ -259,6 +262,15 @@ public class Board {
     }
 
 
+    /**
+     * Finds and moves each tile on the board.
+     * @param row
+     * @param col
+     * @param drow
+     * @param dcol
+     * @param retry
+     * @return
+     */
     private int findAndMoveTile(int row, int col,int drow,int dcol, int retry)
     {
         int crow = row+drow;
@@ -275,9 +287,9 @@ public class Board {
                     this.gameBoard[crow][ccol] = 0;
                 }
 
-                //the move's score.
-                //Not sure if the score should account for the highest combo, or all combos in the move.
-                //it is also adding every moved piece.
+//                the move's score.
+//                Not sure if the score should account for the highest combo, or all combos in the move.
+//                it is also adding every moved piece.
 
 //                if(gameBoard[row][col] != v)
 //                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
@@ -295,14 +307,11 @@ public class Board {
         return 0;
     }
 
-    //pretty much need a new function to see if any spaces on the board are
-    //greater than 2
-
-    //OR
-
-    // make a list of the numbers and counts of them on the board.
-    //if there are any increases in value number count, add that to the score.
-    //ignore 2's and 0's.
+    /**
+     * Creates a hashmap of the board with key value pairs of number and values.
+     * @param gameBoard the board.
+     * @return the hashmap
+     */
     public HashMap<Integer, Integer> createBoardMap(Board gameBoard)
     {
         HashMap<Integer, Integer> boardMap = new HashMap<Integer, Integer>();
@@ -355,8 +364,8 @@ public class Board {
             }
         }
 
-        System.out.println(this.depth);
-        System.out.println("Round score is: " + roundScore + " on board depth " + this.getDepth() + "." );
+//        System.out.println(this.depth);
+//        System.out.println("Round score is: " + roundScore + " on board depth " + this.getDepth() + "." );
         return roundScore;
     }
 

@@ -6,51 +6,117 @@
  */
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Queue;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
 import java.io.File;
 
 
 /**
  * Main class creates and then runs the 2048 game and
  * associated search algorithms. Takes in states from an input file and
- * also outputs it to another text file.
+ * outputs test results to another text file.
+ *
+ * Uses BFS and assumes that every doubling adds to that rounds "score", and
+ * excludes 2's and 0's.
+ *
+ * The BFS goes 3 deep, and chooses at each level the board node with the highest
+ * score. It checks all options as BFS, but chooses for a solution.
  */
 public class Main {
+
+    private static final int GAME_SIZE = 4;
 
     public static void main(String[] args) throws IOException {
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
         Board solution = null;
-        String results;
-
-        //create the game object.
-        Board game = new Board();
-        game.makeBoardEmpty();
-
-        //ensuring the board is empty each time.
-        game.printBoard();
-
-        System.out.println(game + " gb " + game.getGameBoard());
+        String results = ""; //initializing as empty string
+        Path exists = Paths.get("src\\2048_in.txt");
+        String inputFilePath = exists.toAbsolutePath().toString();
+        int numberOfTests;
 
 
-        game.importStaringPosition();
-        game.printBoard();
+        numberOfTests = getNumberOfTests(inputFilePath);
 
-
-        solution = breadthFirstSearch(game);
-
-        System.out.println("Solution board: ");
-        solution.printBoard();
-        System.out.println(solution.movesToGetHere);
-        System.out.println("Solution score" + solution.getScore());
-
-        results = addInfoToResults(solution);
+        for(int i = 0; i < numberOfTests; i++)
+        {
+            results += runTest(inputFilePath, i);
+        }
 
         writeResultsToFile(results);
 
+        //create the game object.
+//        Board game = new Board();
+//        game.makeBoardEmpty();
+//
+//        //ensuring the board is empty each time.
+//        game.printBoard();
+//
+//        System.out.println(game + " gb " + game.getGameBoard());
+//
+//
+//        game.importStaringPosition();
+//        game.printBoard();
+//
+//
+//        solution = breadthFirstSearch(game);
+//
+//        System.out.println("Solution board: ");
+//        solution.printBoard();
+//        System.out.println(solution.movesToGetHere);
+//        System.out.println("Solution score" + solution.getScore());
+
+    }
+
+    public static String runTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
+        File file = new File(inputFilePath);
+        Scanner inputFile = new Scanner(file);
+        inputFile.nextInt();
+        Board solution = null;
+        String solutionResults;
+
+
+        //I'm tired and this is a ridiculous way to manage skipping
+        //4 lines per existing test.
+        while(skipFourLines > 0)
+        {
+            for(int y = 0; y < 4 ; y++)
+            {
+                inputFile.next();
+            }
+            skipFourLines--;
+        }
+
+        //create new board for each new test.
+        Board game = new Board();
+        game.makeBoardEmpty();
+
+        //sets the game board.
+        for (int row = 0; row < GAME_SIZE; row++) {
+            //after first iteration, now on line 6 to start next board state test.
+            String newInput = inputFile.next();
+            String[] split = newInput.split(",", 4);
+
+            for (int col = 0; col < GAME_SIZE; col++) {
+                //game.gameBoard[row][col] = Integer.parseInt(split[col]);
+                game.setGameTile(row, col, Integer.parseInt(split[col]));
+            }
+        }
+        //print the starting board for verification.
+        game.printBoard();
+
+        solution = breadthFirstSearch(game);
+        solutionResults = addInfoToResults(solution);
+
+        return solutionResults;
+    }
+
+    public static int getNumberOfTests(String inputFilePath) throws FileNotFoundException {
+        File file = new File(inputFilePath);
+        Scanner inputFile = new Scanner(file);
+        int numberTests = inputFile.nextInt();
+        return numberTests;
     }
 
     private static String addInfoToResults(Board solution) {
@@ -99,6 +165,11 @@ public class Main {
     }
 
 
+    /**
+     * Executes BFS on the passed in game object.
+     * @param gameNode the game to search
+     * @return the board solution.
+     */
     public static Board breadthFirstSearch(Board gameNode)
     {
         Board bestSolution = gameNode;
