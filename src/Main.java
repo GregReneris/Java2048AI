@@ -30,22 +30,32 @@ public class Main {
     private static final int GAME_SIZE = 4;
 
     public static void main(String[] args) throws IOException {
-        System.out.println("The 2048 game will be built, then a few moves run by an AI.");
+        System.out.println("\nThe 2048 game will be built, then a few moves calculated by the BFS.\n");
         Board solution = null;
         String results = ""; //initializing as empty string
+        String fileDestination = "src\\2048_out.txt";
+
+        //please note that this program was tested on a PC. Mac's can have
+        //different file path writing styles. If that is the case and an error occurs
+        //please use the absolute path as the value for inputFilePath on line 42.
         Path exists = Paths.get("src\\2048_in.txt");
         String inputFilePath = exists.toAbsolutePath().toString();
         int numberOfTests;
 
-
         numberOfTests = getNumberOfTests(inputFilePath);
+
+        System.out.println("We will run " + numberOfTests + " tests.");
+        System.out.println("The starting board arrangements shall be printed.");
+
 
         for(int i = 0; i < numberOfTests; i++)
         {
             results += runTest(inputFilePath, i);
         }
 
-        writeResultsToFile(results);
+        System.out.println("\nThe score and move solutions in order are: \n" + results);
+
+        writeResultsToFile(results, fileDestination);
 
     }
 
@@ -132,14 +142,14 @@ public class Main {
      * each time the program is run.
      * @throws IOException
      */
-    public static void writeResultsToFile(String results) throws IOException {
+    public static void writeResultsToFile(String results, String fileDestination) throws IOException {
         try {
-            FileWriter writer = new FileWriter("src\\2048_out.txt");
-            writer.write(results);
-            writer.close();
-        } catch (IOException e) {
+            FileWriter outputWriter = new FileWriter(fileDestination);
+            outputWriter.write(results);
+            outputWriter.close();
+        } catch (IOException error) {
         System.out.println("An error occurred.");
-        e.printStackTrace();
+        error.printStackTrace();
         }
 
     }
