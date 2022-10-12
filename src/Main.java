@@ -4,10 +4,14 @@
  * Uses algorithms to determine optimal path for the highest score.
  *
  */
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.io.File;
 
 
 /**
@@ -17,9 +21,10 @@ import java.util.LinkedList;
  */
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         System.out.println("The 2048 game will be built, then a few moves run by an AI.");
         Board solution = null;
+        String results;
 
         //create the game object.
         Board game = new Board();
@@ -48,30 +53,57 @@ public class Main {
         System.out.println(solution.movesToGetHere);
         System.out.println("Solution score" + solution.getScore());
 
+        results = addInfoToResults(solution);
 
-        //just pass in game.
-        //Board game2 =  new Board(game);
-
-//        System.out.println(game + " gb " + game.getGameBoard() [0]);
-//        System.out.println(game2 + " gb " + game2.getGameBoard() [0]);
-
-
-
+        writeResultsToFile(results);
 
     }
 
+    private static String addInfoToResults(Board solution) {
+        String results ="";
 
+        results = solution.getScore() + " , ";
+        ArrayList enumArray = solution.movesToGetHere;
 
+        //For some odd reason, the switch statement just wouldn't compile happily.
+        for (Object e : enumArray) {
+            if (Board.Direction.UP.equals(e)) {
+                results += "U";
+            } else if (Board.Direction.RIGHT.equals(e)) {
+                results += "R";
+            } else if (Board.Direction.DOWN.equals(e)) {
+                results += "D";
+            } else if (Board.Direction.LEFT.equals(e)) {
+                results += "L";
+            }
+            results +=",";
+        }
 
+        //pull off dangling ','
+        results = results.substring(0, results.length()-1);
+        //add a new line at the end.
+        results += "\n";
 
+        return results;
+    }
 
+    /**
+     * writes new data to the file each time, output file is overwritten
+     * each time the program is run.
+     * @throws IOException
+     */
+    public static void writeResultsToFile(String results) throws IOException {
+        try {
+            FileWriter writer = new FileWriter("src\\2048_out.txt");
+            writer.write(results);
+            writer.close();
+        } catch (IOException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+        }
 
+    }
 
-    //outside of breadthFirstSearch will still need to compare
-    //to the highest score or first solution found.
-    //if bfs returns null, then it failed.
-
-    //note/tod-o, BFS may require a full tree before running.
 
     public static Board breadthFirstSearch(Board gameNode)
     {
