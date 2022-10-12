@@ -20,15 +20,13 @@ public class Board {
         LEFT
     }
 
-    //BFS page 87 of handout
-
-    private static final int GAME_SIZE = 4;
+    private static final int GAME_SIZE = 4; //board game size.
 
     private final int[][] gameBoard;  //represents 4x4 grid for the game.
 
-    private int depth = 0; //also known as the cost.
+    private int depth = 0; //how far into the tree this board is.
 
-    private int score = 0;
+    private int score = 0; //default score.
 
 
     public ArrayList<Direction> movesToGetHere = new ArrayList<Direction>();
@@ -92,10 +90,7 @@ public class Board {
                 this.moveLeft();
                 break;
 
-
         }
-
-
     }
 
 
@@ -184,6 +179,8 @@ public class Board {
 
     /**
      * imports starting state from 2048_in.txt
+     * Helper function for if the starting position needs to be called by the
+     * Board class and read in. Currently extraneous after refactoring.
      */
     public void importStaringPosition() throws FileNotFoundException {
 //        final String FILENAME = "C:\\Users\\greg\\IdeaProjects\\Java2048AI\\src\\2048_in.txt";
@@ -216,9 +213,6 @@ public class Board {
                 {
                     gameBoard[row][col] = Integer.parseInt(split[col]);
                 }
-
-                //maybe run solution bfs here and record results to a static string
-
             }
         }
     }
@@ -226,28 +220,28 @@ public class Board {
 
 
     /**
-     * This method will scan the entire board and look for the highest number
+     * This method will scan the entire board and look for the highest number.
+     * This method finds the highest value tile and returns it.
      * @return the highest number found.
      */
-//    public int getCurrentScore()
-//    {
-//        int currentHigh = 0;
-//        int readScore;
-//
-//        for(int row = 0; row < GAME_SIZE; row++)
-//        {
-//
-//            for (int col = 0; col < GAME_SIZE; col++)
-//            {
-//                readScore = gameBoard[row][col];
-//
-//                if(readScore > currentHigh)
-//                    currentHigh = readScore;
-//            }
-//        }
-//        this.score = currentHigh;
-//        return currentHigh;
-//    }
+    public int getHighestTileValue()
+    {
+        int currentHigh = 0;
+        int readScore;
+
+        for(int row = 0; row < GAME_SIZE; row++)
+        {
+
+            for (int col = 0; col < GAME_SIZE; col++)
+            {
+                readScore = gameBoard[row][col];
+
+                if(readScore > currentHigh)
+                    currentHigh = readScore;
+            }
+        }
+        return currentHigh;
+    }
 
 
     public int getScore()
@@ -287,15 +281,7 @@ public class Board {
                     this.gameBoard[crow][ccol] = 0;
                 }
 
-//                the move's score.
-//                Not sure if the score should account for the highest combo, or all combos in the move.
-//                it is also adding every moved piece.
 
-//                if(gameBoard[row][col] != v)
-//                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
-//                {
-//                    score += gameBoard[row][col];
-//                }
 
                 return (this.gameBoard[row][col] == v ? retry : 0);
             }
@@ -364,15 +350,11 @@ public class Board {
             }
         }
 
-//        System.out.println(this.depth);
-//        System.out.println("Round score is: " + roundScore + " on board depth " + this.getDepth() + "." );
+
         return roundScore;
     }
 
 
-    /**
-     * ADDING COMPARE MAPS TO MANAGE SCORE AND =+ them!
-     */
 
     public void moveRight()
     {

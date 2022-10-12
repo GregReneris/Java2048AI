@@ -47,27 +47,6 @@ public class Main {
 
         writeResultsToFile(results);
 
-        //create the game object.
-//        Board game = new Board();
-//        game.makeBoardEmpty();
-//
-//        //ensuring the board is empty each time.
-//        game.printBoard();
-//
-//        System.out.println(game + " gb " + game.getGameBoard());
-//
-//
-//        game.importStaringPosition();
-//        game.printBoard();
-//
-//
-//        solution = breadthFirstSearch(game);
-//
-//        System.out.println("Solution board: ");
-//        solution.printBoard();
-//        System.out.println(solution.movesToGetHere);
-//        System.out.println("Solution score" + solution.getScore());
-
     }
 
     public static String runTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
@@ -78,7 +57,7 @@ public class Main {
         String solutionResults;
 
 
-        //I'm tired and this is a ridiculous way to manage skipping
+        //manage skipping
         //4 lines per existing test.
         while(skipFourLines > 0)
         {
@@ -176,7 +155,7 @@ public class Main {
         Board bestSolution = gameNode;
         int counter = 0;
 
-        //a funky class that can work like both a stack and a queue.
+        //ArrayDeque is a funky class that can work like both a stack and a queue.
         //use .add and .remove for queue functions.
         ArrayDeque<Board> work = new ArrayDeque<Board>();
         work.add(gameNode);
