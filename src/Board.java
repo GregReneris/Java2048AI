@@ -15,7 +15,8 @@ public class Board {
         UP,
         RIGHT,
         DOWN,
-        LEFT
+        LEFT,
+        OVER
     }
 
     private static final int GAME_SIZE = 4; //board game size.
@@ -90,6 +91,9 @@ public class Board {
 
             case LEFT:
                 this.moveLeft();
+                break;
+            case OVER:
+                System.out.println("Over in switch statement, no moves remaining");
                 break;
 
         }
