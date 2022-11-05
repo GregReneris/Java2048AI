@@ -52,7 +52,7 @@ public class Main {
 
         for(int i = 0; i < numberOfTests; i++)
         {
-            results += runTest(inputFilePath, i);
+            results += runBFSTest(inputFilePath, i);
         }
 
         System.out.println("\nThe score and move solutions in order are: \n" + results);
@@ -100,7 +100,7 @@ public class Main {
     }
 
 
-    public static String runTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
+    public static String runBFSTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
         File file = new File(inputFilePath);
         Scanner inputFile = new Scanner(file);
         inputFile.nextInt();
