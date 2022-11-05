@@ -94,10 +94,42 @@ public class Main {
             game.printBoard();
         }
 
+        runRandomLocalSearch();
 
-
+        runRandomLocalMaximumSearch();
 
     }
+
+
+    /**
+     *
+     */
+    private static void runRandomLocalSearch() {
+        //create n between 10 and 100. 50 it is!
+        int numberIterations = 50;
+        // each Ex represents the number of empty locations when that move is made.
+        // initializing all as 0.
+        int Eu = 0;
+        int Ed = 0;
+        int El = 0;
+        int Er = 0;
+        int totalMovesTimes2; // according to the algorithm, 2(Eu + Ed+ El + Er) is the state number required.
+
+        //TODO: Calculate Eu, Ed, El, Er numbers. See req page.
+        //TODO: Perhaps create a method that returns current moves avail and then next moves avail in Board.
+
+        totalMovesTimes2 = 2*(Eu+Ed+El+Er); //strict interpretation of the given formula.
+
+        //Randomly Select a non-zero current + future state to follow. Like DFS in some regards, we follow that particular path and return the results.
+        //As a local hill solution, this is not necessarily an optimal solution, just a solution derived from the current and potentially
+        //random state of the board at the start of this algorithm's calling.
+
+    }
+
+
+    private static void runRandomLocalMaximumSearch() {
+    }
+
 
 
     public static String runBFSTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
