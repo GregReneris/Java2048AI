@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.Math;
-import java.util.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * The class to run and build the 2048 game.
@@ -18,17 +20,14 @@ public class Board {
         LEFT
     }
 
-    //BFS page 87 of handout
-
-    private static final int GAME_SIZE = 4;
+    private static final int GAME_SIZE = 4; //board game size.
 
     private final int[][] gameBoard;  //represents 4x4 grid for the game.
 
-    private int depth = 0; //also known as the cost.
+    private int depth = 0; //how far into the tree this board is.
 
-    private int score = 0;
+    private int score = 0; //default score.
 
-    private Random randomGen = new Random();
 
     public ArrayList<Direction> movesToGetHere = new ArrayList<Direction>();
 
@@ -40,10 +39,7 @@ public class Board {
     public Board()
     {
         gameBoard = new int[GAME_SIZE][GAME_SIZE];
-
         newGame();
-
-        System.out.println("Welcome to 2048");
     }
 
     /**
@@ -94,10 +90,7 @@ public class Board {
                 this.moveLeft();
                 break;
 
-
         }
-
-
     }
 
 
@@ -119,6 +112,11 @@ public class Board {
                 gameBoard[i][j] = 0;
             }
         }
+    }
+
+    public void setGameTile(int row, int col, int value)
+    {
+        gameBoard[row][col] = value;
     }
 
     /**
@@ -148,7 +146,6 @@ public class Board {
         }
     }
 
-
     public int getDepth() {
         return depth;
     }
@@ -158,120 +155,32 @@ public class Board {
     }
 
     /**
-     * Places two 2's on the board for game start.
-     */
-    public void setDefaultStartState()
-    {
-        int max = 3;
-        int min = 0;
-        int row;
-        int col;
-        int row2;
-        int col2;
-        int numberToPlace = 2;
-
-        row = randomGen.nextInt(max-min +1 )+min;
-        col = randomGen.nextInt(max-min +1 )+min;
-
-        System.out.println("Placing a 2 at: " + row + " , " + col);
-
-        row2 = randomGen.nextInt(max-min +1 )+min;
-        col2 = randomGen.nextInt(max-min +1 )+min;
-        System.out.println("Placing a 2 at: " + row2 + " , " + col2);
-
-        gameBoard[row][col] = numberToPlace;
-        gameBoard[row2][col2] = numberToPlace;
-
-        if(row2 == row && col2 == col)
-        {
-            System.out.println("Reset board overlap occuredm");
-            //if match reset
-            makeBoardEmpty();
-            setDefaultStartState();
-        }
-    }
-
-
-    //TODO: Adjust this to randomly choose an open board space.
-    /**
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
      */
     public boolean addNextNumber()
     {
-        int max = 10;
-        int min = 1;
-        int numberToAdd = -1; //default to -1 to catch errors.
-        int[][] openSpaces = new int[GAME_SIZE][GAME_SIZE];
-        Dictionary dict = new Hashtable();
-        int counter = 0;
-        int dictsize;
-        int chooseLocation;
-
-
-        int generatedRandom  = randomGen.nextInt(max-min +1 )+min;
-
-        // 9/10 times the number is 2, otherwise is 4.
-        if(generatedRandom < 2 && generatedRandom > 0) // > 0 to fast fail, or if min ever needs to change to negatives.
-        {
-            numberToAdd = 2;
-        }
-        else
-        {
-            numberToAdd = 4;
-        }
-
         boolean foundEmpty = false;
 
-        //TODO: Choose a random place on the board that is not full.
-        //create list of spaces that are labelled 0.
-
-        //modify to add to list a location if it is not zero.
         for(int row = 0; row < GAME_SIZE; row++)
         {
             for(int col = 0; col < GAME_SIZE; col++)
             {
                 if(gameBoard[row][col] == 0 )
                 {
-                    openSpaces[row][col] = gameBoard[row][col];
-
-                    //placing a new xyarray to hold coords in the dict list.
-                    //a new array required every time.
-                    int[] xyarray = new int[2];
-                    xyarray[0] = row;
-                    xyarray[1] = col;
-                    dict.put(counter, xyarray);
-                    counter++;
+                    gameBoard[row][col] = 2;
                     foundEmpty = true;
-                    System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
-
                     return foundEmpty;
                 }
             }
         }
-
-        dictsize = dict.size();
-        chooseLocation = randomGen.nextInt(dictsize + 1); // bound from 0 to max
-        //todo: double check ^^^ that shit.
-        int[] xyarray;
-        int rowToPut;
-        int colToPut;
-
-        //cast into array.
-        xyarray = (int[])dict.get(chooseLocation);
-
-        rowToPut = xyarray[0];
-        colToPut = xyarray[1];
-
-
-
         return foundEmpty;
     }
 
-
-    //TODO: This gets mothballed, probably.
     /**
      * imports starting state from 2048_in.txt
+     * Helper function for if the starting position needs to be called by the
+     * Board class and read in. Currently extraneous after refactoring.
      */
     public void importStaringPosition() throws FileNotFoundException {
 //        final String FILENAME = "C:\\Users\\greg\\IdeaProjects\\Java2048AI\\src\\2048_in.txt";
@@ -291,12 +200,12 @@ public class Board {
         System.out.println("We will run the following number of tests: " + numberTests + ".");
 
 
-
         for(int testNumber = 0; testNumber < numberTests; testNumber++ )
         {
 
             for(int row = 0; row < GAME_SIZE; row++)
             {
+                //after first iteration, now on line 6 to start next board state test.
                 String newInput = inputFile.next();
                 String[] split = newInput.split(",", 4);
 
@@ -308,11 +217,14 @@ public class Board {
         }
     }
 
+
+
     /**
-     * This method will scan the entire board and look for the highest number
+     * This method will scan the entire board and look for the highest number.
+     * This method finds the highest value tile and returns it.
      * @return the highest number found.
      */
-    public int getCurrentScore()
+    public int getHighestTileValue()
     {
         int currentHigh = 0;
         int readScore;
@@ -328,7 +240,6 @@ public class Board {
                     currentHigh = readScore;
             }
         }
-        this.score = currentHigh;
         return currentHigh;
     }
 
@@ -338,14 +249,6 @@ public class Board {
         return score;
     }
 
-//    /**
-//     * Adds a command to the string history.
-//     * @param command
-//     */
-//    public void addToStringOrder(String command)
-//    {
-//        this.movesToGetHere += command;
-//    }
 
     public boolean inBounds(int x, int y)
     {
@@ -353,6 +256,15 @@ public class Board {
     }
 
 
+    /**
+     * Finds and moves each tile on the board.
+     * @param row
+     * @param col
+     * @param drow
+     * @param dcol
+     * @param retry
+     * @return
+     */
     private int findAndMoveTile(int row, int col,int drow,int dcol, int retry)
     {
         int crow = row+drow;
@@ -369,14 +281,7 @@ public class Board {
                     this.gameBoard[crow][ccol] = 0;
                 }
 
-                //the move's score.
-                //Not sure if the score should account for the highest combo, or all combos in the move.
-                //it is also adding every moved piece?
-                if(gameBoard[row][col] != v)
-                //if(gameBoard[row][col] != v && gameBoard[row][col] == gameBoard[row][col]*2)
-                {
-                    score += gameBoard[row][col];
-                }
+
 
                 return (this.gameBoard[row][col] == v ? retry : 0);
             }
@@ -388,11 +293,74 @@ public class Board {
         return 0;
     }
 
-    
+    /**
+     * Creates a hashmap of the board with key value pairs of number and values.
+     * @param gameBoard the board.
+     * @return the hashmap
+     */
+    public HashMap<Integer, Integer> createBoardMap(Board gameBoard)
+    {
+        HashMap<Integer, Integer> boardMap = new HashMap<Integer, Integer>();
+        int numberInput = 0;
+
+        for(int row = 0; row < GAME_SIZE; row++)
+        {
+            for(int col = 0; col < GAME_SIZE; col++)
+            {
+                numberInput = this.gameBoard[row][col];
+                boardMap.merge(numberInput, 1, Integer::sum);
+            }
+        }
+        return boardMap;
+    }
+
+    /**
+     * A method that compares the key value pairs of everything in the two grids.
+     * If a key(a number > 2) gains an additional value greater than what was there before,
+     * that adds to that rounds' score.
+     * @param origMap orignal map
+     * @param newMap new map after the move operation.
+     * @return the score for the round.
+     */
+    private int compareMaps(HashMap<Integer, Integer> origMap, HashMap<Integer, Integer> newMap)
+    {
+        int roundScore = 0;
+        Integer keyValue;
+        int difference;
+
+        for (Map.Entry<Integer, Integer> entry : newMap.entrySet()) {
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+
+            //if the newMap has a key original map does not.
+            if((!origMap.containsKey(key) && newMap.containsKey(key)))
+            {
+                difference = newMap.get(key); // for consistency.
+                roundScore += (key * difference);
+            }
+
+            if ((origMap.containsKey(key) && key > 2)) {
+
+                if (newMap.get(key) > origMap.get(key)) {
+
+                    difference = newMap.get(key) - origMap.get(key);
+
+                    roundScore += (key * difference);
+                }
+            }
+        }
+
+
+        return roundScore;
+    }
+
 
 
     public void moveRight()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
+
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = GAME_SIZE-1; col >= 0; col--) {
                 col += findAndMoveTile(row, col, 0,-1, 1);
@@ -400,14 +368,17 @@ public class Board {
         }
         movesToGetHere.add(Direction.RIGHT);
         addNextNumber();
+
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
-
-
-
 
 
     public void moveLeft()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = 0; col < GAME_SIZE; col++) {
                 col += findAndMoveTile(row, col, 0,1, -1);
@@ -415,10 +386,16 @@ public class Board {
         }
         movesToGetHere.add(Direction.LEFT);
         addNextNumber();
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
 
     public void moveDown()
     {
+
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = GAME_SIZE-1; row >= 0; row--) {
                 row += findAndMoveTile(row, col, -1,0, 1);
@@ -426,12 +403,18 @@ public class Board {
         }
         movesToGetHere.add(Direction.DOWN);
         addNextNumber();
+
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
 
 
 
     public void moveUp()
     {
+        HashMap<Integer, Integer> origMap = createBoardMap(this);
+
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = 0; row < GAME_SIZE; row++) {
                 row += findAndMoveTile(row, col, 1,0, -1);
@@ -439,7 +422,13 @@ public class Board {
         }
         movesToGetHere.add(Direction.UP);
         addNextNumber();
+
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
+
     }
+
+
 
 
 }
