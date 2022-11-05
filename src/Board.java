@@ -214,7 +214,7 @@ public class Board {
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
      */
-    public boolean addNextNumber()
+    public void addNextNumber()
     {
         int max = 10;
         int min = 1;
@@ -250,7 +250,8 @@ public class Board {
             {
                 if(gameBoard[row][col] == 0 )
                 {
-                    openSpaces[row][col] = gameBoard[row][col];
+                    //System.out.println("Gameboard space is: " + gameBoard[row][col]);
+                    //openSpaces[row][col] = gameBoard[row][col];
 
                     //placing a new xyarray to hold coords in the dict list.
                     //a new array required every time.
@@ -262,27 +263,39 @@ public class Board {
                     foundEmpty = true;
                     System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
 
-                    return foundEmpty;
+                    //return foundEmpty;
                 }
             }
         }
 
         dictsize = dict.size();
-        chooseLocation = randomGen.nextInt(dictsize + 1); // bound from 0 to max
-        //todo: double check ^^^ that shit.
-        int[] xyarray;
-        int rowToPut;
-        int colToPut;
 
-        //cast into array.
-        xyarray = (int[])dict.get(chooseLocation);
+        if(dictsize > 0)
+        {
+            chooseLocation = randomGen.nextInt(dictsize); // bound from 0 to max
+            int[] xyarray;
+            int rowToPut = -1;
+            int colToPut = -1;
 
-        rowToPut = xyarray[0];
-        colToPut = xyarray[1];
+            //cast into array.
+            xyarray = (int[])dict.get(chooseLocation);
+
+            System.out.println("Dictionary: " + dict.toString());
+
+            rowToPut = xyarray[0];
+            colToPut = xyarray[1];
+
+            gameBoard[rowToPut][colToPut] = numberToAdd;
+            System.out.println("Adding " +numberToAdd+ " to space " + rowToPut + " , " + colToPut);
+        }
+        else
+        {
+            System.out.println("Board is full, game is probably over.");
+            //maybe use a return here to command this state to equal a game over.
+        }
 
 
-
-        return foundEmpty;
+        //return foundEmpty;
     }
 
 

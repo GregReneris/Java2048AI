@@ -47,15 +47,17 @@ public class Main {
         System.out.println("We will run " + numberOfTests + " tests.");
         System.out.println("The starting board arrangements shall be printed.");
 
+//      Needed to comment the runTest for BFS out, as line in Board.java was causing a nullptr exception.
+//        Something to fix and investigate for later
 
-        for(int i = 0; i < numberOfTests; i++)
-        {
-            results += runTest(inputFilePath, i);
-        }
-
-        System.out.println("\nThe score and move solutions in order are: \n" + results);
-
-        writeResultsToFile(results, fileDestination);
+//        for(int i = 0; i < numberOfTests; i++)
+//        {
+//            results += runTest(inputFilePath, i);
+//        }
+//
+//        System.out.println("\nThe score and move solutions in order are: \n" + results);
+//
+//        writeResultsToFile(results, fileDestination);
 
         runLocalSearchAlgorithms();
 
@@ -85,6 +87,12 @@ public class Main {
         game.printBoard();
         game.moveDown();
         game.printBoard();
+
+        for (int i = 0; i < 50 ; i ++)
+        {
+            game.moveDown();
+            game.printBoard();
+        }
 
     }
 
