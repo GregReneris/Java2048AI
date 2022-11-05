@@ -2,10 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.Random;
 
 /**
  * The class to run and build the 2048 game.
@@ -27,6 +25,8 @@ public class Board {
     private int depth = 0; //how far into the tree this board is.
 
     private int score = 0; //default score.
+
+    public Random randomGen = new Random();
 
 
     public ArrayList<Direction> movesToGetHere = new ArrayList<Direction>();
@@ -154,28 +154,138 @@ public class Board {
         return gameBoard;
     }
 
+//    /**
+//     * Adds a two to the next vertically free space, going left to right, top to bottom.
+//     * @return true if there was an empty space and a 2 is added, false if not.
+//     */
+//    public boolean addNextNumber()
+//    {
+//        boolean foundEmpty = false;
+//
+//        for(int row = 0; row < GAME_SIZE; row++)
+//        {
+//            for(int col = 0; col < GAME_SIZE; col++)
+//            {
+//                if(gameBoard[row][col] == 0 )
+//                {
+//                    gameBoard[row][col] = 2;
+//                    foundEmpty = true;
+//                    return foundEmpty;
+//                }
+//            }
+//        }
+//        return foundEmpty;
+//    }
+
+    public void setDefaultStartState()
+    {
+        int max = 3;
+        int min = 0;
+        int row;
+        int col;
+        int row2;
+        int col2;
+        int numberToPlace = 2;
+
+        row = randomGen.nextInt(max-min +1 )+min;
+        col = randomGen.nextInt(max-min +1 )+min;
+
+        System.out.println("Placing a 2 at: " + row + " , " + col);
+
+        row2 = randomGen.nextInt(max-min +1 )+min;
+        col2 = randomGen.nextInt(max-min +1 )+min;
+        System.out.println("Placing a 2 at: " + row2 + " , " + col2);
+
+        gameBoard[row][col] = numberToPlace;
+        gameBoard[row2][col2] = numberToPlace;
+
+        if(row2 == row && col2 == col)
+        {
+            System.out.println("Reset board overlap occuredm");
+            //if match reset
+            makeBoardEmpty();
+            setDefaultStartState();
+        }
+    }
+
+
+    //TODO: Adjust this to randomly choose an open board space.
     /**
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
      */
     public boolean addNextNumber()
     {
+        int max = 10;
+        int min = 1;
+        int numberToAdd = -1; //default to -1 to catch errors.
+        int[][] openSpaces = new int[GAME_SIZE][GAME_SIZE];
+        Dictionary dict = new Hashtable();
+        int counter = 0;
+        int dictsize;
+        int chooseLocation;
+
+
+        int generatedRandom  = randomGen.nextInt(max-min +1 )+min;
+
+        // 9/10 times the number is 2, otherwise is 4.
+        if(generatedRandom < 2 && generatedRandom > 0) // > 0 to fast fail, or if min ever needs to change to negatives.
+        {
+            numberToAdd = 2;
+        }
+        else
+        {
+            numberToAdd = 4;
+        }
+
         boolean foundEmpty = false;
 
+        //TODO: Choose a random place on the board that is not full.
+        //create list of spaces that are labelled 0.
+
+        //modify to add to list a location if it is not zero.
         for(int row = 0; row < GAME_SIZE; row++)
         {
             for(int col = 0; col < GAME_SIZE; col++)
             {
                 if(gameBoard[row][col] == 0 )
                 {
-                    gameBoard[row][col] = 2;
+                    openSpaces[row][col] = gameBoard[row][col];
+
+                    //placing a new xyarray to hold coords in the dict list.
+                    //a new array required every time.
+                    int[] xyarray = new int[2];
+                    xyarray[0] = row;
+                    xyarray[1] = col;
+                    dict.put(counter, xyarray);
+                    counter++;
                     foundEmpty = true;
+                    System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
+
                     return foundEmpty;
                 }
             }
         }
+
+        dictsize = dict.size();
+        chooseLocation = randomGen.nextInt(dictsize + 1); // bound from 0 to max
+        //todo: double check ^^^ that shit.
+        int[] xyarray;
+        int rowToPut;
+        int colToPut;
+
+        //cast into array.
+        xyarray = (int[])dict.get(chooseLocation);
+
+        rowToPut = xyarray[0];
+        colToPut = xyarray[1];
+
+
+
         return foundEmpty;
     }
+
+
 
     /**
      * imports starting state from 2048_in.txt

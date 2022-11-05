@@ -57,7 +57,37 @@ public class Main {
 
         writeResultsToFile(results, fileDestination);
 
+        runLocalSearchAlgorithms();
+
+
     }
+
+    private static void runLocalSearchAlgorithms() {
+        System.out.println("\n\n\n****************");
+        System.out.println("Moving on to Local Search Algorithms");
+        System.out.println("We will make a new game, new boards, and evaluate starting positions");
+
+
+        Board solution = null;
+
+        //create the game object.
+        Board game = new Board();
+        game.makeBoardEmpty();
+
+        //ensuring the board is empty each time.
+        game.printBoard();
+
+        game.setDefaultStartState();
+
+        //print game memory location, then board mem.
+        System.out.println(game + " gb, starting state " + game.getGameBoard());
+
+        game.printBoard();
+        game.moveDown();
+        game.printBoard();
+
+    }
+
 
     public static String runTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
         File file = new File(inputFilePath);
