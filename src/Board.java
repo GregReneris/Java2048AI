@@ -94,6 +94,7 @@ public class Board {
                 break;
             case OVER:
                 System.out.println("Over in switch statement, no moves remaining");
+//                this.score = getHighestTileValue();
                 break;
 
         }
@@ -207,15 +208,13 @@ public class Board {
 
         if(row2 == row && col2 == col)
         {
-            System.out.println("Reset board overlap occuredm");
+            System.out.println("Reset board overlap occured");
             //if match reset
             makeBoardEmpty();
             setDefaultStartState();
         }
     }
 
-
-    //TODO: Adjust this to randomly choose an open board space.
     /**
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
@@ -244,8 +243,6 @@ public class Board {
             numberToAdd = 4;
         }
 
-
-        //TODO: Choose a random place on the board that is not full.
         //create list of spaces that are labelled 0.
 
         //modify to add to list a location if it is not zero.
@@ -293,6 +290,7 @@ public class Board {
         }
         else
         {
+            //TODO: Check if this is a valid game over handler.
             System.out.println("Board is full, game is probably over.");
             fullBoard = true;
             return fullBoard;
@@ -374,6 +372,11 @@ public class Board {
     public int getScore()
     {
         return score;
+    }
+
+    public boolean getGameOver()
+    {
+        return gameover;
     }
 
 
@@ -496,7 +499,7 @@ public class Board {
         movesToGetHere.add(Direction.RIGHT);
 
 
-
+        //TODO: Handling gameover again, is this a good idea?
         this.gameover = addNextNumber();
         if(this.gameover)
         {
@@ -504,7 +507,7 @@ public class Board {
             //does not create a new map and compares.
             //instead grabs the highest value tile and sets score.
             //this.score = getScore();
-            this.score = getHighestTileValue();
+            this.score = getHighestTileValue(); //TODO: double check this approach.
         }
         else
         {

@@ -158,7 +158,12 @@ public class Main {
 
         //For some odd reason, the switch statement just wouldn't compile happily.
         for (Object e : enumArray) {
-            if (Board.Direction.UP.equals(e)) {
+            if(solution.getGameOver() == true)
+            {
+             Board.Direction.OVER.equals(e);
+             //TODO: Check this to see if it is a valid way of handling game over.
+            }
+            else if (Board.Direction.UP.equals(e)) {
                 results += "U";
             } else if (Board.Direction.RIGHT.equals(e)) {
                 results += "R";
