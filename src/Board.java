@@ -491,9 +491,9 @@ public class Board {
         }
         movesToGetHere.add(Direction.RIGHT);
 
+
+
         this.gameover = addNextNumber();
-
-
         if(this.gameover)
         {
             System.out.println("Game is over, no more moves left");
