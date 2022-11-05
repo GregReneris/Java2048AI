@@ -494,9 +494,13 @@ public class Board {
         this.gameover = addNextNumber();
 
 
-        if(boardFull == -1)
+        if(this.gameover)
         {
-            this.gameover = true;
+            System.out.println("Game is over, no more moves left");
+            //does not create a new map and compares.
+            //instead grabs the highest value tile and sets score.
+            //this.score = getScore();
+            this.score = getHighestTileValue();
         }
         else
         {
