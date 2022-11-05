@@ -25,8 +25,9 @@ public class Board {
     private int depth = 0; //how far into the tree this board is.
 
     private int score = 0; //default score.
-
     public Random randomGen = new Random();
+
+    private boolean gameover;
 
 
     public ArrayList<Direction> movesToGetHere = new ArrayList<Direction>();
@@ -60,6 +61,8 @@ public class Board {
         this.score = originalGame.score;
         //round score would be this score - parent score.
 
+        this.gameover = false;
+
         int[][] gameBoardOrig = originalGame.getGameBoard();
 
         //deep copy the board.
@@ -80,7 +83,6 @@ public class Board {
             case RIGHT:
                 this.moveRight();
                 break;
-
 
             case DOWN:
                 this.moveDown();
@@ -214,16 +216,16 @@ public class Board {
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
      */
-    public void addNextNumber()
+    public boolean addNextNumber()
     {
         int max = 10;
         int min = 1;
         int numberToAdd = -1; //default to -1 to catch errors.
-        int[][] openSpaces = new int[GAME_SIZE][GAME_SIZE];
         Dictionary dict = new Hashtable();
         int counter = 0;
         int dictsize;
         int chooseLocation;
+        boolean fullBoard = false;
 
 
         int generatedRandom  = randomGen.nextInt(max-min +1 )+min;
@@ -238,7 +240,6 @@ public class Board {
             numberToAdd = 4;
         }
 
-        boolean foundEmpty = false;
 
         //TODO: Choose a random place on the board that is not full.
         //create list of spaces that are labelled 0.
@@ -260,10 +261,8 @@ public class Board {
                     xyarray[1] = col;
                     dict.put(counter, xyarray);
                     counter++;
-                    foundEmpty = true;
                     System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
 
-                    //return foundEmpty;
                 }
             }
         }
@@ -274,13 +273,13 @@ public class Board {
         {
             chooseLocation = randomGen.nextInt(dictsize); // bound from 0 to max
             int[] xyarray;
-            int rowToPut = -1;
-            int colToPut = -1;
+            int rowToPut;
+            int colToPut;
 
             //cast into array.
             xyarray = (int[])dict.get(chooseLocation);
 
-            System.out.println("Dictionary: " + dict.toString());
+//            System.out.println("Dictionary: " + dict.toString());
 
             rowToPut = xyarray[0];
             colToPut = xyarray[1];
@@ -291,11 +290,12 @@ public class Board {
         else
         {
             System.out.println("Board is full, game is probably over.");
-            //maybe use a return here to command this state to equal a game over.
+            fullBoard = true;
+            return fullBoard;
         }
 
 
-        //return foundEmpty;
+        return fullBoard;
     }
 
 
@@ -482,7 +482,7 @@ public class Board {
     public void moveRight()
     {
         HashMap<Integer, Integer> origMap = createBoardMap(this);
-
+        int boardFull;
 
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = GAME_SIZE-1; col >= 0; col--) {
@@ -490,11 +490,21 @@ public class Board {
             }
         }
         movesToGetHere.add(Direction.RIGHT);
-        addNextNumber();
+
+        this.gameover = addNextNumber();
 
 
-        HashMap<Integer, Integer> newMap = createBoardMap(this);
-        this.score += compareMaps(origMap, newMap);
+        if(boardFull == -1)
+        {
+            this.gameover = true;
+        }
+        else
+        {
+            HashMap<Integer, Integer> newMap = createBoardMap(this);
+            this.score += compareMaps(origMap, newMap);
+        }
+
+
     }
 
 
