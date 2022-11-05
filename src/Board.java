@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Random;
 
+
 /**
  * The class to run and build the 2048 game.
  */
@@ -15,8 +16,7 @@ public class Board {
         UP,
         RIGHT,
         DOWN,
-        LEFT,
-        OVER
+        LEFT
     }
 
     private static final int GAME_SIZE = 4; //board game size.
@@ -26,6 +26,10 @@ public class Board {
     private int depth = 0; //how far into the tree this board is.
 
     private int score = 0; //default score.
+
+    private int gameBoardHighestTile = 0;
+
+    private int emptySpaces; //the number of open spaces remaining on the board.
     public static Random randomGen = new Random();
 
     private boolean gameover;
@@ -75,29 +79,37 @@ public class Board {
             }
         }
         //newGame(); //causes all boards to reset.
+        //Try around switch, catch if game-over.
+        try
+        {
+            switch (move){
+                case UP:
+                    this.moveUp();
+                    break;
 
-        switch (move){
-            case UP:
-                this.moveUp();
-                break;
+                case RIGHT:
+                    this.moveRight();
+                    break;
 
-            case RIGHT:
-                this.moveRight();
-                break;
+                case DOWN:
+                    this.moveDown();
+                    break;
 
-            case DOWN:
-                this.moveDown();
-                break;
-
-            case LEFT:
-                this.moveLeft();
-                break;
-            case OVER:
-                System.out.println("Over in switch statement, no moves remaining");
-//                this.score = getHighestTileValue();
-                break;
-
+                case LEFT:
+                    this.moveLeft();
+                    break;
+            }
+            this.score = this.score;
+            this.gameBoardHighestTile = getHighestTileValue();
         }
+        catch(Exception GameOverException)
+        {
+            this.score = this.score;
+            this.gameBoardHighestTile = this.getHighestTileValue();
+            System.out.println("GAME OVER EXCEPTION");
+        }
+
+
     }
 
 
@@ -161,6 +173,8 @@ public class Board {
         return gameBoard;
     }
 
+
+
 //    /**
 //     * Adds a two to the next vertically free space, going left to right, top to bottom.
 //     * @return true if there was an empty space and a 2 is added, false if not.
@@ -219,8 +233,7 @@ public class Board {
      * Adds a two to the next vertically free space, going left to right, top to bottom.
      * @return true if there was an empty space and a 2 is added, false if not.
      */
-    public boolean addNextNumber()
-    {
+    public void addNextNumber() throws GameOverException {
         int max = 10;
         int min = 1;
         int numberToAdd = -1; //default to -1 to catch errors.
@@ -262,7 +275,7 @@ public class Board {
                     xyarray[1] = col;
                     dict.put(counter, xyarray);
                     counter++;
-                    System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
+//                    System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
 
                 }
             }
@@ -279,27 +292,45 @@ public class Board {
 
             //cast into array.
             xyarray = (int[])dict.get(chooseLocation);
-
-//            System.out.println("Dictionary: " + dict.toString());
-
             rowToPut = xyarray[0];
             colToPut = xyarray[1];
 
             gameBoard[rowToPut][colToPut] = numberToAdd;
-            System.out.println("Adding " +numberToAdd+ " to space " + rowToPut + " , " + colToPut);
+//            System.out.println("Adding " +numberToAdd+ " to space " + rowToPut + " , " + colToPut);
         }
         else
         {
             //TODO: Check if this is a valid game over handler.
             System.out.println("Board is full, game is probably over.");
-            fullBoard = true;
-            return fullBoard;
+
+            throw new GameOverException();
+
         }
 
-
-        return fullBoard;
     }
 
+    /**
+     * calculates number of spaces with a value of 0.
+     * @return number of spaces on the board with a value of 0.
+     */
+    public int calculateAndReturnNumEmptySpaces()
+    {
+        int numEmptySpaces = 0;
+
+        for(int row = 0; row < GAME_SIZE; row++)
+        {
+            for(int col = 0; col < GAME_SIZE; col++)
+            {
+                if(gameBoard[row][col] == 0 )
+                {
+                    numEmptySpaces++;
+                }
+            }
+        }
+
+        this.emptySpaces = numEmptySpaces; //set empty spaces metric for this board.
+        return numEmptySpaces;
+    }
 
 
     /**
@@ -486,8 +517,7 @@ public class Board {
 
 
 
-    public void moveRight()
-    {
+    public void moveRight() throws GameOverException {
         HashMap<Integer, Integer> origMap = createBoardMap(this);
         int boardFull;
 
@@ -499,28 +529,29 @@ public class Board {
         movesToGetHere.add(Direction.RIGHT);
 
 
-        //TODO: Handling gameover again, is this a good idea?
-        this.gameover = addNextNumber();
-        if(this.gameover)
-        {
-            System.out.println("Game is over, no more moves left");
-            //does not create a new map and compares.
-            //instead grabs the highest value tile and sets score.
-            //this.score = getScore();
-            this.score = getHighestTileValue(); //TODO: double check this approach.
-        }
-        else
-        {
-            HashMap<Integer, Integer> newMap = createBoardMap(this);
-            this.score += compareMaps(origMap, newMap);
-        }
+//        //TODO: Handling gameover again, is this a good idea?
+//        this.gameover = addNextNumber();
+//        if(this.gameover)
+//        {
+//            System.out.println("Game is over, no more moves left");
+//            //does not create a new map and compares.
+//            //instead grabs the highest value tile and sets score.
+//            this.score = getScore();
+//            this.gameBoardHighestTile = getHighestTileValue(); //TODO: double check this approach.
+//        }
+//        else
+//        {
+//            HashMap<Integer, Integer> newMap = createBoardMap(this);
+//            this.score += compareMaps(origMap, newMap);
+//        }
+        addNextNumber();
 
-
+        HashMap<Integer, Integer> newMap = createBoardMap(this);
+        this.score += compareMaps(origMap, newMap);
     }
 
 
-    public void moveLeft()
-    {
+    public void moveLeft() throws GameOverException {
         HashMap<Integer, Integer> origMap = createBoardMap(this);
 
         for(int row = 0; row < GAME_SIZE; row++) {
@@ -535,8 +566,7 @@ public class Board {
         this.score += compareMaps(origMap, newMap);
     }
 
-    public void moveDown()
-    {
+    public void moveDown() throws GameOverException {
 
         HashMap<Integer, Integer> origMap = createBoardMap(this);
 
@@ -555,8 +585,7 @@ public class Board {
 
 
 
-    public void moveUp()
-    {
+    public void moveUp() throws GameOverException {
         HashMap<Integer, Integer> origMap = createBoardMap(this);
 
         for(int col = 0; col < GAME_SIZE; col++) {

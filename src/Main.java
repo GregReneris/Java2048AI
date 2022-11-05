@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.File;
-
+import java.util.Random;
 
 /**
  * Main class creates and then runs the 2048 game and
@@ -29,7 +29,9 @@ public class Main {
 
     private static final int GAME_SIZE = 4;
 
-    public static void main(String[] args) throws IOException {
+    private static Random randomGen = new Random();
+
+    public static void main(String[] args) throws Exception {
         System.out.println("\nThe 2048 game will be built, then a few moves calculated by the BFS.\n");
         Board solution = null;
         String results = ""; //initializing as empty string
@@ -64,10 +66,11 @@ public class Main {
 
     }
 
-    private static void runLocalSearchAlgorithms() {
+    private static void runLocalSearchAlgorithms() throws Exception {
         System.out.println("\n\n\n****************");
         System.out.println("Moving on to Local Search Algorithms");
         System.out.println("We will make a new game, new boards, and evaluate starting positions");
+
 
 
         Board solution = null;
@@ -84,19 +87,33 @@ public class Main {
         //print game memory location, then board mem.
         System.out.println(game + " gb, starting state " + game.getGameBoard());
 
-        game.printBoard();
-        game.moveDown();
-        game.printBoard();
 
-        for (int i = 0; i < 50 ; i ++)
+        ArrayList<Board> randLocalSearchList = new ArrayList<Board>();
+
+        for(int i = 0; i < 50 ; i++)
         {
-            game.moveDown();
-            game.printBoard();
+            Board gameNode = runRandomLocalSearch(game, 0);
+            randLocalSearchList.add(gameNode);
+            System.out.println("Got Here");
+        }
+        int maxIndex = 0;
+        int currentScore = 0;
+        int maxScore = 0;
+        for(int j = 0; j < randLocalSearchList.size(); j++)
+        {
+            currentScore = randLocalSearchList.get(j).getHighestTileValue();
+            if(maxScore < currentScore){
+                maxScore = currentScore;
+                maxIndex = j;
+            }
         }
 
-        runRandomLocalSearch();
+        String results = addInfoToResults(randLocalSearchList.get(maxIndex));
+        System.out.println("The Winning Random Local Search is: " + results);
 
-        runRandomLocalMaximumSearch();
+
+
+        //runRandomLocalMaximumSearch(game);
 
     }
 
@@ -104,30 +121,106 @@ public class Main {
     /**
      *
      */
-    private static void runRandomLocalSearch() {
+    private static Board runRandomLocalSearch(Board gameNode, int iterationCounter) throws Exception {
         //create n between 10 and 100. 50 it is!
-        int numberIterations = 50;
+
+//        int interationCounter;
+        //int numberIterations = 50;
         // each Ex represents the number of empty locations when that move is made.
         // initializing all as 0.
-        int Eu = 0;
-        int Ed = 0;
-        int El = 0;
-        int Er = 0;
-        int totalMovesTimes2; // according to the algorithm, 2(Eu + Ed+ El + Er) is the state number required.
+//        int eu = 0;
+//        int ed = 0;
+//        int el = 0;
+//        int er = 0;
+//        int maximumOfMoveStates; // according to the algorithm, 2(Eu + Ed+ El + Er) is the state number required.
+        //ArrayDeque<Board> work = new ArrayDeque<Board>();
+        Board randomPositiveBoard = null; //resets randomPositiveBoard
 
-        //TODO: Calculate Eu, Ed, El, Er numbers. See req page.
-        //TODO: Perhaps create a method that returns current moves avail and then next moves avail in Board.
 
-        totalMovesTimes2 = 2*(Eu+Ed+El+Er); //strict interpretation of the given formula.
 
+
+        ArrayList<Board> work = new ArrayList<Board>();
+
+        //loop through boards N times or until end condition.
+        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode); //switch gameNode and work.
+        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode);
+        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode);
+        addBoardToListIfValid(work, Board.Direction.UP, gameNode);
+
+//        maximumOfMoveStates = 2 * (eu + ed + el + er); //strict interpretation of the given formula.
+
+        //choose random non zero result from work.
+        if(work.size() > 0)
+        {
+            int index = randomGen.nextInt(work.size());
+//            gameNode = work.get(index);
+            gameNode = runRandomLocalSearch(work.get(index), iterationCounter+1);
+        }
         //Randomly Select a non-zero current + future state to follow. Like DFS in some regards, we follow that particular path and return the results.
         //As a local hill solution, this is not necessarily an optimal solution, just a solution derived from the current and potentially
         //random state of the board at the start of this algorithm's calling.
 
+//    String infoResults = addInfoToResults(gameNode);
+//    System.out.println("Printing results for 1 random local search " + infoResults);
+    return gameNode;
+
     }
 
+    /**
+     * adds the board to the work Deque list, and returns the nextMoveEmptySpace
+     * @param work
+     * @param move
+     * @param gameNode
+     * @return
+     * @throws Exception
+     */
+    private static int addBoardToListIfValid(ArrayList<Board> work, Board.Direction move, Board gameNode) throws Exception {
+        int currentEmptySpaces;
+        int nextMoveEmptySpaces;
+        int combinedEmptySpaces;
+        Board nextBoard = null;
 
-    private static void runRandomLocalMaximumSearch() {
+        currentEmptySpaces = gameNode.calculateAndReturnNumEmptySpaces();
+
+        switch (move) {
+            case UP:
+                nextBoard = new Board(gameNode, Board.Direction.UP);
+                break;
+
+            case RIGHT:
+                nextBoard = new Board(gameNode, Board.Direction.RIGHT);
+                break;
+
+            case DOWN:
+                nextBoard = new Board(gameNode, Board.Direction.DOWN);
+                break;
+
+            case LEFT:
+                nextBoard = new Board(gameNode, Board.Direction.LEFT);
+                break;
+            default:
+                throw new Exception(); //this will do for now.
+        }
+
+        nextMoveEmptySpaces = nextBoard.calculateAndReturnNumEmptySpaces();
+        combinedEmptySpaces = currentEmptySpaces + nextMoveEmptySpaces;
+        int combinedScore = nextBoard.getScore() + gameNode.getScore();
+
+        //comparing to see if the combined score score is non zero.
+        //next game board score - game node score? Score at next board moved forward from previous score,
+        //
+        if(nextBoard.getScore() > gameNode.getScore())
+        {
+            work.add(nextBoard);
+        }
+//        if (combinedEmptySpaces > 0) {
+//            work.add(nextBoard);
+//        }
+        return combinedScore;
+    }
+
+    private static void runRandomLocalMaximumSearch(Board gameNode) {
+        System.out.println("TBD");
     }
 
 
@@ -188,14 +281,9 @@ public class Main {
         results = solution.getScore() + ",";
         ArrayList enumArray = solution.movesToGetHere;
 
-        //For some odd reason, the switch statement just wouldn't compile happily.
         for (Object e : enumArray) {
-            if(solution.getGameOver() == true)
-            {
-             Board.Direction.OVER.equals(e);
-             //TODO: Check this to see if it is a valid way of handling game over.
-            }
-            else if (Board.Direction.UP.equals(e)) {
+
+            if (Board.Direction.UP.equals(e)) {
                 results += "U";
             } else if (Board.Direction.RIGHT.equals(e)) {
                 results += "R";
