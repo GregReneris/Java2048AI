@@ -25,7 +25,7 @@ public class Board {
     private int depth = 0; //how far into the tree this board is.
 
     private int score = 0; //default score.
-    public Random randomGen = new Random();
+    public static Random randomGen = new Random();
 
     private boolean gameover;
 
