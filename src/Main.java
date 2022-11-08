@@ -34,7 +34,7 @@ public class Main {
     private static boolean maxFlag = false;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("\nThe 2048 game will be built, then a few moves calculated by the BFS.\n");
+        System.out.println("\nThe 2048 game will be built, then will run two local search algorithms. \n");
         Board solution = null;
         String results = ""; //initializing as empty string
         String fileDestination = "src\\2048_out.txt";
@@ -42,24 +42,21 @@ public class Main {
         //please note that this program was tested on a PC. Mac's can have
         //different file path writing styles. If that is the case and an error occurs
         //please use the absolute path as the value for inputFilePath on line 42.
-        Path exists = Paths.get("src\\2048_in.txt");
-        String inputFilePath = exists.toAbsolutePath().toString();
-        int numberOfTests;
+//        Path exists = Paths.get("src\\2048_in.txt");
+//        String inputFilePath = exists.toAbsolutePath().toString();
+//        int numberOfTests;
 
-        numberOfTests = getNumberOfTests(inputFilePath);
+//        numberOfTests = getNumberOfTests(inputFilePath);
 
-        System.out.println("We will run " + numberOfTests + " tests.");
-        System.out.println("The starting board arrangements shall be printed.");
+//        System.out.println("We will run " + numberOfTests + " tests.");
+//        System.out.println("The starting board arrangements shall be printed.");
 
-//      Needed to comment the runTest for BFS out, as line in Board.java was causing a nullptr exception.
-//      Something to fix and investigate for later
+//      Needed to comment the runTest for BFS out, as line in Board.java was causing an exception.
 
 //        for(int i = 0; i < numberOfTests; i++)
 //        {
 //            results += runBFSTest(inputFilePath, i);
 //        }
-
-        System.out.println("\nThe score and move solutions in order are: \n" + results);
 
         writeResultsToFile(results, fileDestination);
 
@@ -71,7 +68,7 @@ public class Main {
     private static void runLocalSearchAlgorithms() throws Exception {
         System.out.println("\n\n\n****************");
         System.out.println("Moving on to Local Search Algorithms");
-        System.out.println("We will make a new game, new boards, and evaluate starting positions");
+        System.out.println("We will make a new game, new board, and evaluate starting positions.");
         Board solution = null;
 
         //create the game object.
@@ -90,6 +87,7 @@ public class Main {
         //create the game object.
         game = new Board();
         game.makeBoardEmpty();
+        System.out.println("We will make a new game, new board, and evaluate starting positions.");
         //ensuring the board is empty each time.
         game.setDefaultStartState();
         game.printBoard();
@@ -103,6 +101,8 @@ public class Main {
     }
 
     private static void searchLocalSearchForWinner(Board game, ArrayList<Board> randLocalSearchList, String searchType) throws Exception {
+        Board solution = null;
+
         for(int i = 0; i < 50 ; i++)
         {
             Board gameNode = runRandomLocalSearch(game, 0);
@@ -122,8 +122,10 @@ public class Main {
         }
 
         String results = addInfoToResults(randLocalSearchList.get(maxIndex));
-        System.out.println("The Winning " + searchType + " Local Search is: " + results);
-        System.out.println(randLocalSearchList.get(maxIndex).getHighestTileValue());
+        solution = randLocalSearchList.get(maxIndex);
+        System.out.println("The Winning " + searchType + " Local Search is: " + results +"\n");
+        solution.printBoard();
+        System.out.println("\n");
     }
 
 
@@ -146,7 +148,7 @@ public class Main {
         //if we have valid boards.
         if(work.size() > 0)
         {
-            //this is for the maximum local random search.
+            //this is for the maximum local random search. True results in max search, false random search.
             if(maxFlag)
             {
                 int bestScore = work.get(0).getScore();

@@ -221,18 +221,15 @@ public class Board {
         row = randomGen.nextInt(max-min +1 )+min;
         col = randomGen.nextInt(max-min +1 )+min;
 
-        System.out.println("Placing a 2 at: " + row + " , " + col);
-
         row2 = randomGen.nextInt(max-min +1 )+min;
         col2 = randomGen.nextInt(max-min +1 )+min;
-        System.out.println("Placing a 2 at: " + row2 + " , " + col2);
 
         gameBoard[row][col] = numberToPlace;
         gameBoard[row2][col2] = numberToPlace;
 
         if(row2 == row && col2 == col)
         {
-            System.out.println("Reset board overlap occured");
+            System.out.println("Board reset - overlap occurred.");
             //if match reset
             makeBoardEmpty();
             setDefaultStartState();
@@ -584,22 +581,6 @@ public class Board {
         }
         movesToGetHere.add(Direction.RIGHT);
 
-
-//        //TODO: Handling gameover again, is this a good idea?
-//        this.gameover = addNextNumber();
-//        if(this.gameover)
-//        {
-//            System.out.println("Game is over, no more moves left");
-//            //does not create a new map and compares.
-//            //instead grabs the highest value tile and sets score.
-//            this.score = getScore();
-//            this.gameBoardHighestTile = getHighestTileValue(); //TODO: double check this approach.
-//        }
-//        else
-//        {
-//            HashMap<Integer, Integer> newMap = createBoardMap(this);
-//            this.score += compareMaps(origMap, newMap);
-//        }
         addNextNumber();
 
         HashMap<Integer, Integer> newMap = createBoardMap(this);
