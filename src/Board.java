@@ -12,6 +12,7 @@ import java.util.Random;
 public class Board {
 
 
+
     enum Direction {
         UP,
         RIGHT,
@@ -25,7 +26,9 @@ public class Board {
 
     private int depth = 0; //how far into the tree this board is.
 
-    private int score = 0; //default score.
+//    private int score = 0; //default score.
+
+    private int score2 = 0;
 
     private int gameBoardHighestTile = 0;
 
@@ -63,8 +66,9 @@ public class Board {
 
         this.parent = originalGame;
 
-        this.score = originalGame.score;
+//        this.score = originalGame.score;
         //round score would be this score - parent score.
+        this.score2 = originalGame.score2;
 
         this.gameover = false;
 
@@ -99,14 +103,15 @@ public class Board {
                     this.moveLeft();
                     break;
             }
-            this.score = this.score;
+//            this.score = this.score;
             this.gameBoardHighestTile = getHighestTileValue();
         }
         catch(Exception GameOverException)
         {
-            this.score = this.score;
+//            this.score = this.score;
+
             this.gameBoardHighestTile = this.getHighestTileValue();
-            System.out.println("GAME OVER EXCEPTION");
+//            System.out.println("GAME OVER EXCEPTION");
         }
 
 
@@ -171,6 +176,11 @@ public class Board {
 
     public int[][] getGameBoard() {
         return gameBoard;
+    }
+
+
+    public int getScore2() {
+        return score2;
     }
 
 
@@ -300,8 +310,7 @@ public class Board {
         }
         else
         {
-            //TODO: Check if this is a valid game over handler.
-            System.out.println("Board is full, game is probably over.");
+//            System.out.println("Board is full, game is probably over.");
 
             throw new GameOverException();
 
@@ -402,7 +411,8 @@ public class Board {
 
     public int getScore()
     {
-        return score;
+        //return score;
+        return score2;
     }
 
     public boolean getGameOver()
@@ -430,6 +440,52 @@ public class Board {
     {
         int crow = row+drow;
         int ccol = col+dcol;
+        int cell = this.gameBoard[row][col];
+
+
+        //look for non-empty cell in direction specified.
+        while(inBounds(crow,ccol))
+        {
+            //get current cell to check.
+            int ccell = this.gameBoard[crow][ccol];
+            if(ccell != 0)
+            {
+                //checked cell was not empty.
+                if(cell == 0)
+                {
+                    //destination is empty. Put found value into destination.
+                    this.gameBoard[row][col] = ccell;
+                    this.gameBoard[crow][ccol] = 0;
+                    return retry; //Check to see if there are more to move at this location.
+                }
+
+                if(ccell == cell)
+                {
+                    //destination and source value match, add to score and double
+                    //the value at destination.
+                    this.gameBoard[row][col] = ccell*2;
+                    this.gameBoard[crow][ccol] = 0;
+                    this.score2 += ccell*2;
+                    return 0; //only 1 doubling allowed. Continue to next location.
+                }
+
+                //don't move the cell, continue to next location, and if is empty will move cell then.
+                return 0;
+            }
+
+            //check cell is empty, loop and check next cell in requested direction.
+            crow += drow;
+            ccol += dcol;
+        }
+
+        return 0;
+    }
+
+    private int findAndMoveTile2(int row, int col,int drow,int dcol, int retry)
+    {
+        int crow = row+drow;
+        int ccol = col+dcol;
+
 
         while(inBounds(crow,ccol))
         {
@@ -453,6 +509,7 @@ public class Board {
 
         return 0;
     }
+
 
     /**
      * Creates a hashmap of the board with key value pairs of number and values.
@@ -511,7 +568,6 @@ public class Board {
             }
         }
 
-
         return roundScore;
     }
 
@@ -547,7 +603,7 @@ public class Board {
         addNextNumber();
 
         HashMap<Integer, Integer> newMap = createBoardMap(this);
-        this.score += compareMaps(origMap, newMap);
+//        this.score += compareMaps(origMap, newMap);
     }
 
 
@@ -563,7 +619,7 @@ public class Board {
         addNextNumber();
 
         HashMap<Integer, Integer> newMap = createBoardMap(this);
-        this.score += compareMaps(origMap, newMap);
+//        this.score += compareMaps(origMap, newMap);
     }
 
     public void moveDown() throws GameOverException {
@@ -580,7 +636,7 @@ public class Board {
 
 
         HashMap<Integer, Integer> newMap = createBoardMap(this);
-        this.score += compareMaps(origMap, newMap);
+//        this.score += compareMaps(origMap, newMap);
     }
 
 
@@ -597,7 +653,7 @@ public class Board {
         addNextNumber();
 
         HashMap<Integer, Integer> newMap = createBoardMap(this);
-        this.score += compareMaps(origMap, newMap);
+//        this.score += compareMaps(origMap, newMap);
 
     }
 

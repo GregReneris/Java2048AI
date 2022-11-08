@@ -31,6 +31,8 @@ public class Main {
 
     private static Random randomGen = new Random();
 
+    private static boolean maxFlag = false;
+
     public static void main(String[] args) throws Exception {
         System.out.println("\nThe 2048 game will be built, then a few moves calculated by the BFS.\n");
         Board solution = null;
@@ -52,10 +54,10 @@ public class Main {
 //      Needed to comment the runTest for BFS out, as line in Board.java was causing a nullptr exception.
 //      Something to fix and investigate for later
 
-        for(int i = 0; i < numberOfTests; i++)
-        {
-            results += runBFSTest(inputFilePath, i);
-        }
+//        for(int i = 0; i < numberOfTests; i++)
+//        {
+//            results += runBFSTest(inputFilePath, i);
+//        }
 
         System.out.println("\nThe score and move solutions in order are: \n" + results);
 
@@ -70,38 +72,49 @@ public class Main {
         System.out.println("\n\n\n****************");
         System.out.println("Moving on to Local Search Algorithms");
         System.out.println("We will make a new game, new boards, and evaluate starting positions");
-
-
-
         Board solution = null;
 
         //create the game object.
         Board game = new Board();
         game.makeBoardEmpty();
-
         //ensuring the board is empty each time.
-        game.printBoard();
-
         game.setDefaultStartState();
-
-        //print game memory location, then board mem.
-        System.out.println(game + " gb, starting state " + game.getGameBoard());
-
-
+        //Show start state of board
+        game.printBoard();
         ArrayList<Board> randLocalSearchList = new ArrayList<Board>();
 
+        searchLocalSearchForWinner(game, randLocalSearchList, "Random");
+
+
+        //now for local maximum search
+        //create the game object.
+        game = new Board();
+        game.makeBoardEmpty();
+        //ensuring the board is empty each time.
+        game.setDefaultStartState();
+        game.printBoard();
+        //make a new ArrayList as well.
+        randLocalSearchList = new ArrayList<Board>();
+
+        maxFlag = true;
+        searchLocalSearchForWinner(game, randLocalSearchList, "Maximum");
+
+
+    }
+
+    private static void searchLocalSearchForWinner(Board game, ArrayList<Board> randLocalSearchList, String searchType) throws Exception {
         for(int i = 0; i < 50 ; i++)
         {
             Board gameNode = runRandomLocalSearch(game, 0);
             randLocalSearchList.add(gameNode);
-            System.out.println("Got Here");
+            //System.out.println("Got Here");
         }
         int maxIndex = 0;
         int currentScore = 0;
         int maxScore = 0;
         for(int j = 0; j < randLocalSearchList.size(); j++)
         {
-            currentScore = randLocalSearchList.get(j).getHighestTileValue();
+            currentScore = randLocalSearchList.get(j).getScore();
             if(maxScore < currentScore){
                 maxScore = currentScore;
                 maxIndex = j;
@@ -109,12 +122,8 @@ public class Main {
         }
 
         String results = addInfoToResults(randLocalSearchList.get(maxIndex));
-        System.out.println("The Winning Random Local Search is: " + results);
-
-
-
-        //runRandomLocalMaximumSearch(game);
-
+        System.out.println("The Winning " + searchType + " Local Search is: " + results);
+        System.out.println(randLocalSearchList.get(maxIndex).getHighestTileValue());
     }
 
 
@@ -122,22 +131,7 @@ public class Main {
      *
      */
     private static Board runRandomLocalSearch(Board gameNode, int iterationCounter) throws Exception {
-        //create n between 10 and 100. 50 it is!
-
-//        int interationCounter;
-        //int numberIterations = 50;
-        // each Ex represents the number of empty locations when that move is made.
-        // initializing all as 0.
-//        int eu = 0;
-//        int ed = 0;
-//        int el = 0;
-//        int er = 0;
-//        int maximumOfMoveStates; // according to the algorithm, 2(Eu + Ed+ El + Er) is the state number required.
-        //ArrayDeque<Board> work = new ArrayDeque<Board>();
         Board randomPositiveBoard = null; //resets randomPositiveBoard
-
-
-
 
         ArrayList<Board> work = new ArrayList<Board>();
 
@@ -149,19 +143,42 @@ public class Main {
 
 //        maximumOfMoveStates = 2 * (eu + ed + el + er); //strict interpretation of the given formula.
 
-        //choose random non zero result from work.
+        //if we have valid boards.
         if(work.size() > 0)
         {
+            //this is for the maximum local random search.
+            if(maxFlag)
+            {
+                int bestScore = work.get(0).getScore();
+                ArrayList<Board> workmax = new ArrayList<>();
+
+                for(Board x : work)
+                {
+                    if(x.getScore() > bestScore)
+                    {
+                        bestScore = x.getScore();
+                        workmax.clear();
+                    }
+                    if(x.getScore() == bestScore)
+                    {
+                        workmax.add(x);
+                    }
+                }
+                work = workmax;
+            }
+
+
+            //Randomly Select a non-zero current + future state to follow. Like DFS in some regards,
+            // we follow that particular path and return the results.
+            //As a local hill solution, this is not necessarily an optimal solution,
+            // just a solution derived from the current and potentially
+            //random state of the board at the start of this algorithm's calling.
             int index = randomGen.nextInt(work.size());
 //            gameNode = work.get(index);
             gameNode = runRandomLocalSearch(work.get(index), iterationCounter+1);
         }
-        //Randomly Select a non-zero current + future state to follow. Like DFS in some regards, we follow that particular path and return the results.
-        //As a local hill solution, this is not necessarily an optimal solution, just a solution derived from the current and potentially
-        //random state of the board at the start of this algorithm's calling.
 
-//    String infoResults = addInfoToResults(gameNode);
-//    System.out.println("Printing results for 1 random local search " + infoResults);
+
     return gameNode;
 
     }
@@ -208,19 +225,14 @@ public class Main {
 
         //comparing to see if the combined score score is non zero.
         //next game board score - game node score? Score at next board moved forward from previous score,
-        //
-        if(nextBoard.getScore() > gameNode.getScore())
+
+        if(nextBoard.getScore() > gameNode.getScore() || nextBoard.calculateAndReturnNumEmptySpaces() < gameNode.calculateAndReturnNumEmptySpaces())
         {
             work.add(nextBoard);
         }
-//        if (combinedEmptySpaces > 0) {
-//            work.add(nextBoard);
-//        }
-        return combinedScore;
-    }
 
-    private static void runRandomLocalMaximumSearch(Board gameNode) {
-        System.out.println("TBD");
+
+        return combinedScore;
     }
 
 
@@ -278,7 +290,8 @@ public class Main {
     private static String addInfoToResults(Board solution) {
         String results ="";
 
-        results = solution.getScore() + ",";
+        results += "\nCumulative score : ";
+        results += solution.getScore() + "\nMoves to get here: ";
         ArrayList enumArray = solution.movesToGetHere;
 
         for (Object e : enumArray) {
@@ -298,7 +311,8 @@ public class Main {
         //pull off dangling ','
         results = results.substring(0, results.length()-1);
         //add a new line at the end.
-        results += "\n";
+        results += "\nHighest Tile Value: ";
+        results += solution.getHighestTileValue();
 
         return results;
     }
