@@ -6,8 +6,8 @@
  */
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
 import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -15,15 +15,14 @@ import java.util.Random;
 
 /**
  * Main class creates and then runs the 2048 game and
- * associated search algorithms. Takes in states from an input file and
- * outputs test results to another text file.
+ * associated search algorithms.
  *
- * Uses BFS and assumes that every doubling adds to that rounds "score" and
+ * Uses Local and max search and assumes that every doubling adds to that rounds "score" and
  * excludes 2's and 0's. When there are multiple doubles in one turn, those
  * doubles will combine to make a higher score. An 8 and a 16 result in a 24, for example.
  *
- * The BFS goes 3 deep, and chooses at each level the board node with the highest
- * score. It checks all options as BFS, but chooses highest to return as a solution.
+ * The searches go 50 and 25 itersations, and chooses at each level the board node
+ * randomly or with the highest score. Ties are randomly decided.
  */
 public class Main {
 
