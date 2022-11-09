@@ -102,8 +102,12 @@ public class Main {
 
     private static void searchLocalSearchForWinner(Board game, ArrayList<Board> randLocalSearchList, String searchType) throws Exception {
         Board solution = null;
+        int numberIterations = 50; //set iterations for local search
 
-        for(int i = 0; i < 50 ; i++)
+        if (maxFlag)
+            numberIterations = 25; //desired iterations for max local search.
+
+        for(int i = 0; i < numberIterations ; i++)
         {
             Board gameNode = runRandomLocalSearch(game, 0);
             randLocalSearchList.add(gameNode);
@@ -154,13 +158,16 @@ public class Main {
                 int bestScore = work.get(0).getScore();
                 ArrayList<Board> workmax = new ArrayList<>();
 
+                //for each board in work, compare against best so far.
                 for(Board x : work)
                 {
+                    //if new score is higher, choose new score to follow the path of.
                     if(x.getScore() > bestScore)
                     {
                         bestScore = x.getScore();
                         workmax.clear();
                     }
+                    //if there is a tie, add both to the workmax ArrayList.
                     if(x.getScore() == bestScore)
                     {
                         workmax.add(x);
@@ -171,9 +178,9 @@ public class Main {
 
 
             //Randomly Select a non-zero current + future state to follow. Like DFS in some regards,
-            // we follow that particular path and return the results.
+            //we follow that particular path and return the results.
             //As a local hill solution, this is not necessarily an optimal solution,
-            // just a solution derived from the current and potentially
+            //just a solution derived from the current and potentially
             //random state of the board at the start of this algorithm's calling.
             int index = randomGen.nextInt(work.size());
 //            gameNode = work.get(index);
