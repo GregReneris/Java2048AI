@@ -270,13 +270,7 @@ public class Main {
      * @throws Exception
      */
     private static void addBoardToListIfValid(ArrayList<Board> work, Board.Direction move, Board gameNode) throws Exception {
-//        int currentEmptySpaces;
-//        int nextMoveEmptySpaces;
-//        int combinedEmptySpaces;
         Board nextBoard = null;
-//        boolean maximizer = maximizer;
-//
-//        currentEmptySpaces = gameNode.calculateAndReturnNumEmptySpaces();
 
         switch (move) {
             case UP:
@@ -308,57 +302,6 @@ public class Main {
     }
 
 
-
-    public static String runBFSTest(String inputFilePath, int skipFourLines) throws FileNotFoundException {
-        File file = new File(inputFilePath);
-        Scanner inputFile = new Scanner(file);
-        inputFile.nextInt();
-        Board solution = null;
-        String solutionResults;
-
-
-        //manage skipping
-        //4 lines per existing test.
-        while(skipFourLines > 0)
-        {
-            for(int y = 0; y < 4 ; y++)
-            {
-                inputFile.next();
-            }
-            skipFourLines--;
-        }
-
-        //create new board for each new test.
-        Board game = new Board();
-        game.makeBoardEmpty();
-
-        //sets the game board.
-        for (int row = 0; row < GAME_SIZE; row++) {
-            //after first iteration, now on line 6 to start next board state test.
-            String newInput = inputFile.next();
-            String[] split = newInput.split(",", 4);
-
-            for (int col = 0; col < GAME_SIZE; col++) {
-                //game.gameBoard[row][col] = Integer.parseInt(split[col]);
-                game.setGameTile(row, col, Integer.parseInt(split[col]));
-            }
-        }
-        //print the starting board for verification.
-        game.printBoard();
-
-        solution = breadthFirstSearch(game);
-        solutionResults = addInfoToResults(solution);
-
-        return solutionResults;
-    }
-
-    public static int getNumberOfTests(String inputFilePath) throws FileNotFoundException {
-        File file = new File(inputFilePath);
-        Scanner inputFile = new Scanner(file);
-        int numberTests = inputFile.nextInt();
-        return numberTests;
-    }
-
     private static String addInfoToResults(Board solution) {
         String results ="";
 
@@ -388,64 +331,4 @@ public class Main {
 
         return results;
     }
-
-    /**
-     * writes new data to the file each time, output file is overwritten
-     * each time the program is run.
-     * @throws IOException
-     */
-    public static void writeResultsToFile(String results, String fileDestination) throws IOException {
-        try {
-            FileWriter outputWriter = new FileWriter(fileDestination);
-            outputWriter.write(results);
-            outputWriter.close();
-        } catch (IOException error) {
-        System.out.println("An error occurred.");
-        error.printStackTrace();
-        }
-
-    }
-
-
-    /**
-     * Executes BFS on the passed in game object.
-     * @param gameNode the game to search
-     * @return the board solution.
-     */
-    public static Board breadthFirstSearch(Board gameNode)
-    {
-        Board bestSolution = gameNode;
-        int counter = 0;
-
-        //ArrayDeque is a funky class that can work like both a stack and a queue.
-        //use .add and .remove for queue functions.
-        ArrayDeque<Board> work = new ArrayDeque<Board>();
-        work.add(gameNode);
-
-        while(!work.isEmpty())
-        {
-            gameNode = work.remove(); //pop first Board off.
-            if(gameNode.getScore() > bestSolution.getScore())
-            {
-                bestSolution = gameNode;
-            }
-            if(gameNode.getDepth() < 3 )
-            {
-                work.add(new Board(gameNode, Board.Direction.UP));
-                work.add(new Board(gameNode, Board.Direction.RIGHT));
-                work.add(new Board(gameNode, Board.Direction.DOWN));
-                work.add(new Board(gameNode, Board.Direction.LEFT));
-            }
-            else{
-            }
-            counter++;
-
-        }
-        //System.out.println(counter);
-        return bestSolution;
-    }
-
-
-
-
 }
