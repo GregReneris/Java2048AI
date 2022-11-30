@@ -35,32 +35,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("\nThe 2048 game will be built, then will run two local search algorithms. \n");
         Board solution = null;
-        String results = ""; //initializing as empty string
-        String fileDestination = "src\\2048_out.txt";
 
-        //please note that this program was tested on a PC. Mac's can have
-        //different file path writing styles. If that is the case and an error occurs
-        //please use the absolute path as the value for inputFilePath on line 42.
-//        Path exists = Paths.get("src\\2048_in.txt");
-//        String inputFilePath = exists.toAbsolutePath().toString();
-//        int numberOfTests;
 
-//        numberOfTests = getNumberOfTests(inputFilePath);
+        //runLocalSearchAlgorithms();
 
-//        System.out.println("We will run " + numberOfTests + " tests.");
-//        System.out.println("The starting board arrangements shall be printed.");
-
-//      Needed to comment the runTest for BFS out, as line in Board.java was causing an exception.
-
-//        for(int i = 0; i < numberOfTests; i++)
-//        {
-//            results += runBFSTest(inputFilePath, i);
-//        }
-
-        writeResultsToFile(results, fileDestination);
-
-        runLocalSearchAlgorithms();
-
+        //pass in depth 0.
+        runMiniMaxSearch();
 
     }
 
@@ -132,21 +112,55 @@ public class Main {
     }
 
 
+
+    private static Board runMiniMaxSearch(Board gameNode, int depth, boolean minMax ) throws Exception
+    {
+
+        ArrayList<Board> work = new ArrayList<Board>;
+
+        //start with list of four.
+        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.UP, gameNode, maxOrMin);
+       
+        //based on min max, pick the next one with the highest of lowest score. 
+        if(work.size > 0 )
+        {
+            Board picked = work[0];
+
+            for(int i = 1; i < work.size; i++)
+            {
+
+            }
+        }
+
+        //if depth too big don't call self
+
+        //need maximzer
+
+   
+        //choose result that has the highest 
+
+
+    }
+
+
     /**
      *
      */
     private static Board runRandomLocalSearch(Board gameNode, int iterationCounter) throws Exception {
         Board randomPositiveBoard = null; //resets randomPositiveBoard
+        boolean maxOrMin = true //maximizer is true, minimizer is false
 
         ArrayList<Board> work = new ArrayList<Board>();
 
         //loop through boards N times or until end condition.
-        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode); //switch gameNode and work.
-        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode);
-        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode);
-        addBoardToListIfValid(work, Board.Direction.UP, gameNode);
+        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.UP, gameNode, maxOrMin);
 
-//        maximumOfMoveStates = 2 * (eu + ed + el + er); //strict interpretation of the given formula.
 
         //if we have valid boards.
         if(work.size() > 0)
@@ -156,6 +170,8 @@ public class Main {
             {
                 int bestScore = work.get(0).getScore();
                 ArrayList<Board> workmax = new ArrayList<>();
+
+
 
                 //for each board in work, compare against best so far.
                 for(Board x : work)
@@ -183,6 +199,9 @@ public class Main {
             //random state of the board at the start of this algorithm's calling.
             int index = randomGen.nextInt(work.size());
 //            gameNode = work.get(index);
+            
+
+
             gameNode = runRandomLocalSearch(work.get(index), iterationCounter+1);
         }
 
@@ -200,12 +219,13 @@ public class Main {
      * @throws Exception
      */
     private static int addBoardToListIfValid(ArrayList<Board> work, Board.Direction move, Board gameNode) throws Exception {
-        int currentEmptySpaces;
-        int nextMoveEmptySpaces;
-        int combinedEmptySpaces;
-        Board nextBoard = null;
-
-        currentEmptySpaces = gameNode.calculateAndReturnNumEmptySpaces();
+//        int currentEmptySpaces;
+//        int nextMoveEmptySpaces;
+//        int combinedEmptySpaces;
+//        Board nextBoard = null;
+//        boolean maximizer = maximizer;
+//
+//        currentEmptySpaces = gameNode.calculateAndReturnNumEmptySpaces();
 
         switch (move) {
             case UP:
@@ -224,11 +244,32 @@ public class Main {
                 nextBoard = new Board(gameNode, Board.Direction.LEFT);
                 break;
             default:
-                throw new Exception(); //this will do for now.
+                throw new Exception();
         }
+
+
+        if(nextBoard.getScore() > gameNode.getScore() || nextBoard.calculateAndReturnNumEmptySpaces() < gameNode.calculateAndReturnNumEmptySpaces())
+        {
+            //gameNode.addChild(nextBoard);
+            work.add(nextBoard);
+        }
+
+
+
+
+        if(nextBoard.calculateAndReturnNumEmptySpaces() < gameNode.calculateAndReturnNumEmptySpaces())
+        {
+            work.add(nextBoard);
+        }
+
+        return;
 
         nextMoveEmptySpaces = nextBoard.calculateAndReturnNumEmptySpaces();
         combinedEmptySpaces = currentEmptySpaces + nextMoveEmptySpaces;
+
+
+
+
         int combinedScore = nextBoard.getScore() + gameNode.getScore();
 
         //comparing to see if the combined score score is non zero.
