@@ -1,3 +1,6 @@
 # Project exclude paths
 /out/
 2048_out.txt
+/.vs/Java2048AI/FileContentIndex
+/.vs/Java2048AI/v17
+/.vs
