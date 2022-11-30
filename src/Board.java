@@ -17,7 +17,8 @@ public class Board {
         UP,
         RIGHT,
         DOWN,
-        LEFT
+        LEFT,
+        NONE
     }
 
     private static final int GAME_SIZE = 4; //board game size.
@@ -101,6 +102,9 @@ public class Board {
 
                 case LEFT:
                     this.moveLeft();
+                    break;
+
+                case NONE:
                     break;
             }
 //            this.score = this.score;
@@ -338,6 +342,36 @@ public class Board {
         return numEmptySpaces;
     }
 
+    /**
+     * creates a board list of all possible opponent boards with 2's and 4's in
+     * every currently available space.
+     * @return
+     */
+    public ArrayList<Board> getOpponentBoardOptions()
+    {
+        ArrayList<Board> options = new ArrayList<>();
+
+        for(int row = 0; row < GAME_SIZE; row++) {
+            for (int col = 0; col < GAME_SIZE; col++) {
+                if(gameBoard[row][col] == 0 )
+                {
+                    Board copiedBoard;
+
+                    //for 2's.
+                    copiedBoard = new Board(this, Direction.NONE);
+                    copiedBoard.gameBoard[row][col] = 2;
+                    options.add(copiedBoard);
+
+                    //for 4's
+                    copiedBoard = new Board(this, Direction.NONE);
+                    copiedBoard.gameBoard[row][col] = 4;
+                    options.add(copiedBoard);
+                }
+            }
+
+        }
+        return options;
+    }
 
     /**
      * imports starting state from 2048_in.txt
@@ -571,7 +605,6 @@ public class Board {
 
 
     public void moveRight() throws GameOverException {
-        HashMap<Integer, Integer> origMap = createBoardMap(this);
         int boardFull;
 
         for(int row = 0; row < GAME_SIZE; row++) {
@@ -581,15 +614,9 @@ public class Board {
         }
         movesToGetHere.add(Direction.RIGHT);
 
-        addNextNumber();
-
-        HashMap<Integer, Integer> newMap = createBoardMap(this);
-//        this.score += compareMaps(origMap, newMap);
     }
 
-
     public void moveLeft() throws GameOverException {
-        HashMap<Integer, Integer> origMap = createBoardMap(this);
 
         for(int row = 0; row < GAME_SIZE; row++) {
             for (int col = 0; col < GAME_SIZE; col++) {
@@ -597,15 +624,10 @@ public class Board {
             }
         }
         movesToGetHere.add(Direction.LEFT);
-        addNextNumber();
 
-        HashMap<Integer, Integer> newMap = createBoardMap(this);
-//        this.score += compareMaps(origMap, newMap);
     }
 
     public void moveDown() throws GameOverException {
-
-        HashMap<Integer, Integer> origMap = createBoardMap(this);
 
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = GAME_SIZE-1; row >= 0; row--) {
@@ -613,17 +635,11 @@ public class Board {
             }
         }
         movesToGetHere.add(Direction.DOWN);
-        addNextNumber();
-
-
-        HashMap<Integer, Integer> newMap = createBoardMap(this);
-//        this.score += compareMaps(origMap, newMap);
     }
 
 
 
     public void moveUp() throws GameOverException {
-        HashMap<Integer, Integer> origMap = createBoardMap(this);
 
         for(int col = 0; col < GAME_SIZE; col++) {
             for (int row = 0; row < GAME_SIZE; row++) {
@@ -631,10 +647,6 @@ public class Board {
             }
         }
         movesToGetHere.add(Direction.UP);
-        addNextNumber();
-
-        HashMap<Integer, Integer> newMap = createBoardMap(this);
-//        this.score += compareMaps(origMap, newMap);
 
     }
 

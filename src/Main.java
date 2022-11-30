@@ -32,6 +32,8 @@ public class Main {
 
     private static boolean maxFlag = false;
 
+    private static int DEPTH = 2;
+
     public static void main(String[] args) throws Exception {
         System.out.println("\nThe 2048 game will be built, then will run two local search algorithms. \n");
         Board solution = null;
@@ -40,7 +42,7 @@ public class Main {
         //runLocalSearchAlgorithms();
 
         //pass in depth 0.
-        runMiniMaxSearch();
+        runMinMaxSearch();
 
     }
 
@@ -112,37 +114,86 @@ public class Main {
     }
 
 
+    private static void runMinMaxSearch() throws Exception {
+        //create starting board.
+        Board gameBoard = new Board();
+        gameBoard.setDefaultStartState();
 
-    private static Board runMiniMaxSearch(Board gameNode, int depth, boolean minMax ) throws Exception
-    {
+        //try catch teh for loop.
 
-        ArrayList<Board> work = new ArrayList<Board>;
+        for(;;){
+            int moveIndex = gameBoard.movesToGetHere.size();
+            Board board = minMaxSearch(gameBoard, 0);
+            // todo: check for null board here.
+            // apply the move to gameboard to go in direction of board.
+            gameBoard = new Board(gameBoard, gameBoard.movesToGetHere.get(moveIndex));
+            gameBoard.addNextNumber(); //bringing back the champ, as it moved out of moves.
 
-        //start with list of four.
-        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.UP, gameNode, maxOrMin);
-       
-        //based on min max, pick the next one with the highest of lowest score. 
-        if(work.size > 0 )
-        {
-            Board picked = work[0];
-
-            for(int i = 1; i < work.size; i++)
-            {
-
-            }
         }
 
-        //if depth too big don't call self
 
-        //need maximzer
+    }
 
-   
-        //choose result that has the highest 
+    private static Board minMaxSearch(Board gameNode, int depth) throws Exception
+    {
 
+        //get the max best move.
+        gameNode = getMinMaxMove(gameNode, true); //starts with max
 
+        if(gameNode != null && depth < DEPTH)
+        {
+            //test every possible combination the opponent might pick and pick the min.
+            ArrayList<Board> opOptions = gameNode.getOpponentBoardOptions();
+
+            //Board minBoard = null;
+            for(Board op : opOptions)
+            {
+                //get min score
+                Board ans = getMinMaxMove(op, false);//returns lowest scoring board from op
+                if(ans.getScore() < gameNode.getScore())
+                    gameNode = ans;
+            }
+
+            gameNode = minMaxSearch(gameNode, depth+1);
+        }
+
+        return gameNode;
+    }
+
+    private static Board getMinMaxMove(Board gameNode, boolean minMax ) throws Exception
+    {
+        Board picked = null;
+
+        ArrayList<Board> work = new ArrayList<>();
+
+        //start with list of four.
+        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode);
+        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode);
+        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode);
+        addBoardToListIfValid(work, Board.Direction.UP, gameNode);
+       
+        //based on min max, pick the next one with the highest of lowest score. 
+        if(work.size() > 0 )
+        {
+            picked = work.get(0);
+
+            for(int i = 1; i < work.size(); i++)
+            {
+                if(minMax)
+                {
+                    //we want the max
+                    if(work.get(i).getScore() > picked.getScore())
+                        picked = work.get(i);
+                }
+                else
+                {
+                    //want the min
+                    if(work.get(i).getScore() < picked.getScore())
+                        picked = work.get(i);
+                }
+            }
+        }
+        return picked;
     }
 
 
@@ -151,15 +202,15 @@ public class Main {
      */
     private static Board runRandomLocalSearch(Board gameNode, int iterationCounter) throws Exception {
         Board randomPositiveBoard = null; //resets randomPositiveBoard
-        boolean maxOrMin = true //maximizer is true, minimizer is false
+        boolean maxOrMin = true; //maximizer is true, minimizer is false
 
         ArrayList<Board> work = new ArrayList<Board>();
 
         //loop through boards N times or until end condition.
-        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode, maxOrMin);
-        addBoardToListIfValid(work, Board.Direction.UP, gameNode, maxOrMin);
+        addBoardToListIfValid(work, Board.Direction.RIGHT, gameNode);
+        addBoardToListIfValid(work, Board.Direction.DOWN, gameNode);
+        addBoardToListIfValid(work, Board.Direction.LEFT, gameNode);
+        addBoardToListIfValid(work, Board.Direction.UP, gameNode);
 
 
         //if we have valid boards.
@@ -218,11 +269,11 @@ public class Main {
      * @return
      * @throws Exception
      */
-    private static int addBoardToListIfValid(ArrayList<Board> work, Board.Direction move, Board gameNode) throws Exception {
+    private static void addBoardToListIfValid(ArrayList<Board> work, Board.Direction move, Board gameNode) throws Exception {
 //        int currentEmptySpaces;
 //        int nextMoveEmptySpaces;
 //        int combinedEmptySpaces;
-//        Board nextBoard = null;
+        Board nextBoard = null;
 //        boolean maximizer = maximizer;
 //
 //        currentEmptySpaces = gameNode.calculateAndReturnNumEmptySpaces();
@@ -254,34 +305,6 @@ public class Main {
             work.add(nextBoard);
         }
 
-
-
-
-        if(nextBoard.calculateAndReturnNumEmptySpaces() < gameNode.calculateAndReturnNumEmptySpaces())
-        {
-            work.add(nextBoard);
-        }
-
-        return;
-
-        nextMoveEmptySpaces = nextBoard.calculateAndReturnNumEmptySpaces();
-        combinedEmptySpaces = currentEmptySpaces + nextMoveEmptySpaces;
-
-
-
-
-        int combinedScore = nextBoard.getScore() + gameNode.getScore();
-
-        //comparing to see if the combined score score is non zero.
-        //next game board score - game node score? Score at next board moved forward from previous score,
-
-        if(nextBoard.getScore() > gameNode.getScore() || nextBoard.calculateAndReturnNumEmptySpaces() < gameNode.calculateAndReturnNumEmptySpaces())
-        {
-            work.add(nextBoard);
-        }
-
-
-        return combinedScore;
     }
 
 
