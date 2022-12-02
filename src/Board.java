@@ -651,6 +651,17 @@ public class Board {
     }
 
 
+    public boolean isEqual(Board rh)
+    {
+        for(int col = 0; col < GAME_SIZE; col++) {
+            for (int row = 0; row < GAME_SIZE; row++) {
+                if (gameBoard[col][row] != rh.gameBoard[col][row]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 
 }
