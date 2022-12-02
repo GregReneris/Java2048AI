@@ -31,10 +31,42 @@ public class Main {
     private static int DEPTH = 5;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("\nThe 2048 game will be built, then will run minimax algorithms. \n");
+        System.out.println("\nThe 2048 game will be built, then will run minimax algorithms with different depths \n");
+
+        System.out.println("This next evaluation will run minimax multiple times.");
+        System.out.println("We will search at depths 1, 2, 3, and 5.");
+
+        DEPTH = 1;
+        calculateTimeAtDepth();
+
+        DEPTH = 2;
+        calculateTimeAtDepth();
+
+        DEPTH = 3;
+        calculateTimeAtDepth();
+
+        DEPTH = 5;
+        calculateTimeAtDepth();
+
+        System.out.println("In conclusion, we see that depths of 1,2, and 3 are rather quick in ms typically between 50 and 200 ms.");
+        System.out.println("However, jumping up to a depth of 5, the time cost is exponential, taking around 1,500 - 3000 ms.");
+        System.out.println("I have also found that a depth of 7 takes around 130 seconds (130,000 ms) on my home machine.");
+
+
+
+    }
+
+    private static void calculateTimeAtDepth() throws Exception {
+        long start_d3 =  System.currentTimeMillis();
+        long end_d3 =  0;
+        long resultTimed_d3 = 0;
 
         runMinMaxSearch();
 
+        end_d3 = System.currentTimeMillis();
+        resultTimed_d3 = end_d3 - start_d3;
+        System.out.println("***** Searched with a DEPTH OF: " + DEPTH + " *****");
+        System.out.println("This search took: " + resultTimed_d3 + " miliseconds or " + resultTimed_d3/1000 + " second(s).\n\n");
     }
 
 
@@ -50,9 +82,7 @@ public class Main {
         gameBoard.setDefaultStartState();
         boolean movesLeft = true;
         String resultsString = "";
-        long start =  System.currentTimeMillis();
-        long end =  0;
-        long resultTime = 0;
+
         int startingDepth = 0;
 
         while(movesLeft){
@@ -70,10 +100,7 @@ public class Main {
                 movesLeft = false;
                 //board.printBoard();
                 resultsString += addInfoToResults(board);
-                end = System.currentTimeMillis();
-                resultTime = end - start;
                 System.out.println("Winner is: "  + resultsString);
-                System.out.println("This search took: " + resultTime + " miliseconds or " + resultTime/1000 + " second(s).");
 
 
             }
