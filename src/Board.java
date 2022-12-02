@@ -112,8 +112,6 @@ public class Board {
         }
         catch(Exception GameOverException)
         {
-//            this.score = this.score;
-
             this.gameBoardHighestTile = this.getHighestTileValue();
 //            System.out.println("GAME OVER EXCEPTION");
         }
@@ -187,30 +185,6 @@ public class Board {
         return score2;
     }
 
-
-
-//    /**
-//     * Adds a two to the next vertically free space, going left to right, top to bottom.
-//     * @return true if there was an empty space and a 2 is added, false if not.
-//     */
-//    public boolean addNextNumber()
-//    {
-//        boolean foundEmpty = false;
-//
-//        for(int row = 0; row < GAME_SIZE; row++)
-//        {
-//            for(int col = 0; col < GAME_SIZE; col++)
-//            {
-//                if(gameBoard[row][col] == 0 )
-//                {
-//                    gameBoard[row][col] = 2;
-//                    foundEmpty = true;
-//                    return foundEmpty;
-//                }
-//            }
-//        }
-//        return foundEmpty;
-//    }
 
     public void setDefaultStartState()
     {
