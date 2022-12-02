@@ -81,7 +81,7 @@ public class Main {
     }
 
     /**
-     * This algorithm is an implementatoin of the minimax algo.
+     * This algorithm is an implementation of the minimax algo.
      * Goes depth >= DEPTH recursions in. This is because we start at 0 depth
      * and depth increments showing the board state is further in.
      * @param board The initial board
