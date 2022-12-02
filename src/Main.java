@@ -34,23 +34,15 @@ public class Main {
         System.out.println("\nThe 2048 game will be built, then will run minimax algorithms with different depths \n");
 
         System.out.println("This next evaluation will run minimax multiple times.");
-        System.out.println("We will search at depths 1, 2, 3, and 5.");
+        System.out.println("We will search at depths 1, 2, 3, 5, 7 and 9.");
 
-        DEPTH = 1;
-        calculateTimeAtDepth();
+        for (int d : new int[]{1,2,3,5,7,9})
+        {
+            DEPTH = d;
+            calculateTimeAtDepth();
+        }
 
-        DEPTH = 2;
-        calculateTimeAtDepth();
-
-        DEPTH = 3;
-        calculateTimeAtDepth();
-
-        DEPTH = 5;
-        calculateTimeAtDepth();
-
-        System.out.println("In conclusion, we see that depths of 1,2, and 3 are rather quick in ms typically between 50 and 200 ms.");
-        System.out.println("However, jumping up to a depth of 5, the time cost is exponential, taking around 1,500 - 3000 ms.");
-        System.out.println("I have also found that a depth of 7 takes around 130 seconds (130,000 ms) on my home machine.");
+        System.out.println("Using pruning, we can see that the time to evaluate the boards is much less than previously seen.");
 
 
 
@@ -87,7 +79,7 @@ public class Main {
 
         while(movesLeft){
             int moveIndex = gameBoard.movesToGetHere.size();
-            Board board = minimax(gameBoard, startingDepth, true);
+            Board board = alphabeta(gameBoard, startingDepth, null, null, true);
 
             // apply the move to gameboard to go in direction of board.
             if(moveIndex != board.movesToGetHere.size())
@@ -170,6 +162,84 @@ public class Main {
         }
         return result;
     }
+
+    private static Board alphabeta(Board board, int depth, Board alpha, Board beta,  boolean minMax) throws Exception {
+        Board result = null;
+        ArrayList<Board> children = new ArrayList<>();
+
+        //only support odd depths. Due to the 2 step process.
+        if (depth >= DEPTH )
+        {
+            return board;
+        }
+
+
+        if(minMax)
+        {
+            //get 4 directions
+            addBoardToListIfValid(children, Board.Direction.RIGHT, board);
+            addBoardToListIfValid(children, Board.Direction.LEFT, board);
+            addBoardToListIfValid(children, Board.Direction.DOWN, board);
+            addBoardToListIfValid(children, Board.Direction.UP, board);
+
+            //for every child board, find max.
+            for(Board child : children)
+            {
+
+                Board r = alphabeta(child, depth+1, alpha, beta, false);
+
+                if(result == null || r.getScore() > result.getScore())
+                {
+                    result = r;
+                }
+
+                if(beta != null && r.getScore() >= beta.getScore())
+                {
+                    break;
+                }
+
+                if( alpha == null || alpha.getScore() > result.getScore())
+                {
+                    alpha = r;
+                }
+            }
+        }
+        else
+        {
+            //for every empty space in the board, find all potential options
+            //with getOpponentBoardOptions.
+            children = board.getOpponentBoardOptions();
+            for(Board child : children)
+            {
+                Board r = alphabeta(child, depth+1, alpha, beta, true);
+
+                if(result == null || r.getScore() < result.getScore())
+                {
+                    result = r;
+                }
+
+                if(alpha != null && r.getScore() >= alpha.getScore())
+                {
+                    break;
+                }
+
+                if( beta == null || beta.getScore() > result.getScore())
+                {
+                    beta = r;
+                }
+            }
+        }
+
+        //if there were no more moves available to the 'player' result is null.
+        if (result == null)
+        {
+            result = board;
+        }
+        return result;
+    }
+
+
+
 
     /**
      * adds the board to the work Deque list, and returns the nextMoveEmptySpace
