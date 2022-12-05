@@ -81,6 +81,8 @@ public class Main {
             int moveIndex = gameBoard.movesToGetHere.size();
             Board board = alphabeta(gameBoard, startingDepth, null, null, true);
 
+
+
             // apply the move to gameboard to go in direction of board.
             if(moveIndex != board.movesToGetHere.size())
             {
@@ -163,6 +165,16 @@ public class Main {
         return result;
     }
 
+    /**
+     * Implementing alpha beta pruning.
+     * @param board
+     * @param depth
+     * @param alpha
+     * @param beta
+     * @param minMax
+     * @return
+     * @throws Exception
+     */
     private static Board alphabeta(Board board, int depth, Board alpha, Board beta,  boolean minMax) throws Exception {
         Board result = null;
         ArrayList<Board> children = new ArrayList<>();
@@ -173,7 +185,7 @@ public class Main {
             return board;
         }
 
-
+        //check for max or min of minmax
         if(minMax)
         {
             //get 4 directions
@@ -186,18 +198,22 @@ public class Main {
             for(Board child : children)
             {
 
+                //new board r.
                 Board r = alphabeta(child, depth+1, alpha, beta, false);
 
+                //if we have no boards left or the new board score is higher, set result to r.
                 if(result == null || r.getScore() > result.getScore())
                 {
                     result = r;
                 }
 
+                //if beta is not null and score above beta score, break.
                 if(beta != null && r.getScore() >= beta.getScore())
                 {
                     break;
                 }
 
+                //if alpha score is better, alpha = r
                 if( alpha == null || alpha.getScore() > result.getScore())
                 {
                     alpha = r;

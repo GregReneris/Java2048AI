@@ -83,6 +83,11 @@ public class Board {
                 this.gameBoard[row][col] = gameBoardOrig[row][col];
             }
         }
+
+        int i[] = gameBoardOrig[2];
+        int j[] = gameBoardOrig[1];
+        i[1] = 55;
+
         //newGame(); //causes all boards to reset.
         //Try around switch, catch if game-over.
         try
