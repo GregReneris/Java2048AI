@@ -189,29 +189,6 @@ public class Board {
 
 
 
-//    /**
-//     * Adds a two to the next vertically free space, going left to right, top to bottom.
-//     * @return true if there was an empty space and a 2 is added, false if not.
-//     */
-//    public boolean addNextNumber()
-//    {
-//        boolean foundEmpty = false;
-//
-//        for(int row = 0; row < GAME_SIZE; row++)
-//        {
-//            for(int col = 0; col < GAME_SIZE; col++)
-//            {
-//                if(gameBoard[row][col] == 0 )
-//                {
-//                    gameBoard[row][col] = 2;
-//                    foundEmpty = true;
-//                    return foundEmpty;
-//                }
-//            }
-//        }
-//        return foundEmpty;
-//    }
-
     public void setDefaultStartState()
     {
         int max = 3;
@@ -276,9 +253,6 @@ public class Board {
             {
                 if(gameBoard[row][col] == 0 )
                 {
-                    //System.out.println("Gameboard space is: " + gameBoard[row][col]);
-                    //openSpaces[row][col] = gameBoard[row][col];
-
                     //placing a new xyarray to hold coords in the dict list.
                     //a new array required every time.
                     int[] xyarray = new int[2];
@@ -286,8 +260,6 @@ public class Board {
                     xyarray[1] = col;
                     dict.put(counter, xyarray);
                     counter++;
-//                    System.out.println("xyarray added into dict: " + Arrays.toString(xyarray));
-
                 }
             }
         }
@@ -307,12 +279,9 @@ public class Board {
             colToPut = xyarray[1];
 
             gameBoard[rowToPut][colToPut] = numberToAdd;
-//            System.out.println("Adding " +numberToAdd+ " to space " + rowToPut + " , " + colToPut);
         }
         else
         {
-//            System.out.println("Board is full, game is probably over.");
-
             throw new GameOverException();
 
         }
@@ -372,47 +341,6 @@ public class Board {
         }
         return options;
     }
-
-    /**
-     * imports starting state from 2048_in.txt
-     * Helper function for if the starting position needs to be called by the
-     * Board class and read in. Currently extraneous after refactoring.
-     */
-    public void importStaringPosition() throws FileNotFoundException {
-//        final String FILENAME = "C:\\Users\\greg\\IdeaProjects\\Java2048AI\\src\\2048_in.txt";
-
-        //to deal with different IDEs and relative paths
-        Path exists = Paths.get("src\\2048_in.txt");
-        String FILENAME2 = exists.toAbsolutePath().toString();
-
-        //File file = new File(FILENAME);
-        File file = new File(FILENAME2);
-        Scanner inputFile = new Scanner(file);
-        int numberOfTests;
-        int numberTests = 0;
-        int col = 0;
-
-        numberTests = inputFile.nextInt();
-        System.out.println("We will run the following number of tests: " + numberTests + ".");
-
-
-        for(int testNumber = 0; testNumber < numberTests; testNumber++ )
-        {
-
-            for(int row = 0; row < GAME_SIZE; row++)
-            {
-                //after first iteration, now on line 6 to start next board state test.
-                String newInput = inputFile.next();
-                String[] split = newInput.split(",", 4);
-
-                for (col = 0; col < GAME_SIZE; col++)
-                {
-                    gameBoard[row][col] = Integer.parseInt(split[col]);
-                }
-            }
-        }
-    }
-
 
 
     /**
